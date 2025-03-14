@@ -7,18 +7,14 @@ namespace ThuongMaiDienTu.Repositories;
 
 public class SanPhamRepository : Repository<SanPham>, ISanPhamRepository
 {
-    private readonly ApplicationDbContext _context;
-    public SanPhamRepository(ApplicationDbContext context) : base(context)
+    private readonly DbContextApp _context;
+    public SanPhamRepository(DbContextApp context) : base(context)
     {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
+        _context = context;
     }
-    public async Task<IEnumerable<SanPham>> GetSanPhamsByDanhMucId(int danhMucId)
+    public IEnumerable<SanPham> GetSanPhamsByDanhMucId(int danhMucId)
     {
-        return await _context.SanPham.Where(s => s.DanhMucId == danhMucId).ToListAsync();
-    }
-    public async Task<IEnumerable<SanPham>> GetAll()
-    {
-        return await _context.SanPham.ToListAsync();
+        return _context.SanPhams.Where(s => s.Id_Danh_Muc == danhMucId).ToList();
     }
 }
 

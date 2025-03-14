@@ -28,21 +28,21 @@ namespace ThuongMaiDienTu.Models
 
         [Required]
         [Precision(10, 2)]
-        public decimal GiaGoc { get; set; } // Giá gốc
+        public decimal Gia_Goc { get; set; } // Giá gốc
 
         [Precision(10, 2)]
-        public decimal? GiamGia { get; set; } // Mức giảm giá (nếu có)
+        public decimal? Giam_Gia { get; set; } // Mức giảm giá (nếu có)
 
         [Precision(10, 2)]
-        public decimal? GiaKhuyenMai { get; set; } // Giá sau khuyến mãi
+        public decimal? Gia_Khuyen_Mai { get; set; } // Giá sau khuyến mãi
 
         [Required]
-        public int SoLuongTon { get; set; } // Số lượng tồn kho
+        public int So_Luong_Ton { get; set; } // Số lượng tồn kho
 
         [Required]
-        public DateTime NgayTao = DateTime.Now;
+        public DateTime Ngay_Tao = DateTime.Now;
 
         [StringLength(500)]
-        public string HinhAnh { get; set; }
+        public string Hinh_Anh { get; set; }
     }
 }

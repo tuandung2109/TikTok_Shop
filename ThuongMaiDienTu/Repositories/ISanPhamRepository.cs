@@ -5,5 +5,5 @@ namespace ThuongMaiDienTu.Repositories;
 
 public interface ISanPhamRepository : IRepository<SanPham>
 {
-    Task<IEnumerable<SanPham>> GetSanPhamsByDanhMucId(int danhMucId);
+    IEnumerable<SanPham> GetSanPhamsByDanhMucId(int danhMucId);
 }

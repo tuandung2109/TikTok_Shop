@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using ThuongMaiDienTu.Repositories;
 using ThuongMaiDienTu.Models;
-using System.Threading.Tasks;
 
 namespace ThuongMaiDienTu.Controllers
 {
@@ -10,13 +9,13 @@ namespace ThuongMaiDienTu.Controllers
         private readonly ISanPhamRepository _sanPhamRepository;
         public SanPhamController(ISanPhamRepository sanPhamRepository)
         {
-            _sanPhamRepository = sanPhamRepository ?? throw new ArgumentNullException(nameof(sanPhamRepository));
+            _sanPhamRepository = sanPhamRepository;
         }
     
         // GET: SanPhamController
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var sanPhams = await _sanPhamRepository.GetAll();
+            var sanPhams =  _sanPhamRepository.GetAll();
             return View(sanPhams);
         }
         public IActionResult Create()
@@ -24,18 +23,18 @@ namespace ThuongMaiDienTu.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(SanPham sanPham)
+        public IActionResult Create(SanPham sanPham)
         {
             if (ModelState.IsValid)
             {
-                await _sanPhamRepository.Add(sanPham);
+                 _sanPhamRepository.Add(sanPham);
                 return RedirectToAction("Index");
             }
             return View(sanPham);
         }
-        public async Task<IActionResult> Edit(int id)
+        public IActionResult Edit(int id)
         {
-            var sanPham = await _sanPhamRepository.GetById(id);
+            var sanPham =  _sanPhamRepository.GetById(id);
             if (sanPham == null)
             {
                 return NotFound();
@@ -43,18 +42,18 @@ namespace ThuongMaiDienTu.Controllers
             return View(sanPham);
         }
         [HttpPost]
-        public async Task<IActionResult> Edit(SanPham sanPham)
+        public IActionResult Edit(SanPham sanPham)
         {
             if (ModelState.IsValid)
             {
-                await _sanPhamRepository.Update(sanPham);
+                 _sanPhamRepository.Update(sanPham);
                 return RedirectToAction("Index");
             }
             return View(sanPham);
         }
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
-            var sanPham = await _sanPhamRepository.GetById(id);
+            var sanPham =  _sanPhamRepository.GetById(id);
             if (sanPham == null)
             {
                 return NotFound();
@@ -62,10 +61,9 @@ namespace ThuongMaiDienTu.Controllers
             return View(sanPham);
         }
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var sanPham = await _sanPhamRepository.GetById(id);
-            await _sanPhamRepository.Delete(sanPham);
+            _sanPhamRepository.Delete(id);
             return RedirectToAction("Index");
         }
     }

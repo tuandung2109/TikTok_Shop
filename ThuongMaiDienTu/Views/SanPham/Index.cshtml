@@ -15,9 +15,9 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.TenSanPham</td>
-                <td>@item.GiaGoc</td>
-                <td>@item.SoLuongTon</td>
+                <td>@item.Ten_San_Pham</td>
+                <td>@item.Gia_Goc</td>
+                <td>@item.So_Luong_Ton</td>
                 <td>
                     <a href="@Url.Action("Edit", "Product", new { id = item.Id })" class="btn btn-warning">Sửa</a>
                     <a href="@Url.Action("Delete", "Product", new { id = item.Id })" class="btn btn-danger">Xóa</a>
