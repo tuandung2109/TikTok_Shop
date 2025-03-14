@@ -1,6 +1,5 @@
-using System;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThuongMaiDienTu.Models
 {
@@ -8,14 +7,13 @@ namespace ThuongMaiDienTu.Models
     public class VaiTro
     {
         [Key]
-        [Column("id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // Không tự động tăng
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(20)]
-        [Column("ten_vai_tro")]
-        public string TenVaiTro { get; set; }
+        [StringLength(20)]
+        public string Ten_vai_Tro { get; set; }
 
-        public ICollection<NguoiDung>? NguoiDungs { get; set; }
-    }
+        public ICollection<NguoiDung> NguoiDungs { get; set; }
+    } 
 }

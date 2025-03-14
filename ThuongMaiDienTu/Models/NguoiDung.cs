@@ -1,5 +1,4 @@
-using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ThuongMaiDienTu.Models
@@ -8,35 +7,32 @@ namespace ThuongMaiDienTu.Models
     public class NguoiDung
     {
         [Key]
-        [Column("id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        [Column("ho_ten")]
-        public string? HoTen { get; set; }
+        [StringLength(255)]
+        public string Ho_Ten { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        [Column("email")]
-        public string? Email { get; set; }
+        [EmailAddress]
+        [StringLength(255)]
+        public string Email { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        [Column("mat_khau")]
-        public string? MatKhau { get; set; }
+        [StringLength(255)]
+        public string Mat_Khau { get; set; } 
 
-        [MaxLength(20)]
-        [Column("so_dien_thoai")]
-        public string? SoDienThoai { get; set; }
+        [StringLength(20)]
+        [Phone]
+        public string So_Dien_Thoai { get; set; }
 
-        [Column("vai_tro_id")]
-        public int VaiTroId { get; set; }
+        public int Vai_Tro_Id { get; set; }
 
-        [ForeignKey("VaiTroId")]
-        public VaiTro? VaiTro { get; set; }
+        [ForeignKey("Vai_Tro_Id")]
+        public VaiTro? VaiTro { get; set; } // Navigation Property
 
-        [Column("ngay_tao")]
-        public DateTime NgayTao { get; set; } = DateTime.Now;
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime Ngay_Tao { get; set; } = DateTime.Now;
     }
 }
