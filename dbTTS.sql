@@ -55,6 +55,8 @@ CREATE TABLE [san_pham] (
   [ngay_tao] DATETIME DEFAULT GETDATE()
 );
 GO
+ALTER TABLE san_pham ADD hinh_anh NVARCHAR(255) NULL;
+
 
 -- Bảng trạng thái đơn hàng (thay cho ENUM)
 CREATE TABLE [trang_thai_don_hang] (
