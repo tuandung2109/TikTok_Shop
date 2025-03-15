@@ -10,6 +10,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 
 builder.Services.AddSession(options =>
 {

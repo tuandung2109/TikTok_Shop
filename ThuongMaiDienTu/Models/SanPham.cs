@@ -22,9 +22,9 @@ namespace ThuongMaiDienTu.Models
 
         [Required]
         [StringLength(255)]
-        public string Ten_San_Pham { get; set; }
+        public string? Ten_San_Pham { get; set; }
 
-        public string Mo_Ta { get; set; } // Mô tả sản phẩm
+        public string? Mo_Ta { get; set; } // Mô tả sản phẩm
 
         [Required]
         [Precision(10, 2)]
@@ -39,10 +39,10 @@ namespace ThuongMaiDienTu.Models
         [Required]
         public int So_Luong_Ton { get; set; } // Số lượng tồn kho
 
-        [Required]
+        // [Required]
         public DateTime Ngay_Tao = DateTime.Now;
 
         [StringLength(500)]
-        public string Hinh_Anh { get; set; }
+        public string? Hinh_Anh { get; set; }
     }
 }
