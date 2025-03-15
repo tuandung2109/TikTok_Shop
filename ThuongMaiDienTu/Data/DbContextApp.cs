@@ -22,5 +22,6 @@ namespace ThuongMaiDienTu.Data
         public DbSet<TrangThaiThanhToan> TrangThaiThanhToans{ get; set; }
         public DbSet<TrangThaiVanChuyen> TrangThaiVanChuyens { get; set; }
         public DbSet<VanChuyen> VanChuyens{ get; set; }
+
     }
 }

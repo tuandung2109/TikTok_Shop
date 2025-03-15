@@ -7,7 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
+//builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
+
+
+// Đăng ký DbContext
+builder.Services.AddDbContext<DbContextApp>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Đăng ký Repository
+builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -40,6 +49,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=TrangChu}/{id?}");
 
 app.Run();

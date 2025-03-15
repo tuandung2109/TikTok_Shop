@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ThuongMaiDienTu.Repositories;
 using ThuongMaiDienTu.Models;
 
@@ -7,6 +7,7 @@ namespace ThuongMaiDienTu.Controllers
     public class SanPhamController : Controller
     {
         private readonly ISanPhamRepository _sanPhamRepository;
+        
         public SanPhamController(ISanPhamRepository sanPhamRepository)
         {
             _sanPhamRepository = sanPhamRepository;
@@ -65,6 +66,17 @@ namespace ThuongMaiDienTu.Controllers
         {
             _sanPhamRepository.Delete(id);
             return RedirectToAction("Index");
+        }
+
+        // Thêm luống 2 : 
+        public IActionResult ChiTiet(int id)
+        {
+            var sanPham = _sanPhamRepository.GetById(id);
+            if (sanPham == null)
+            {
+                return NotFound();
+            }
+            return View(sanPham);
         }
     }
 }
