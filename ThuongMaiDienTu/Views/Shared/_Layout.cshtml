@@ -50,9 +50,18 @@
                     @if (user != null)
                     {
                         if (isSeller != null) {
-                            <a href="@Url.Action("Profile", "Store")"><i class="fa-solid fa-store icon"></i></a>
+                            <!-- Nếu đã đăng nhập -->
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-store icon"></i> 
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item" href="@Url.Action("Profile", "Store")">Profile Cửa Hàng</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Danh Sách Sản Phẩm</a></li>
+                                </ul>
+                            </div>
                         }
-                        <!-- Nếu đã đăng nhập -->
+                        
                         <a href="@Url.Action("Profile", "Account")"><i class="fa-solid fa-user-tie icon"></i></a>
                         <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger ms-2">Đăng Xuất</a>
                     }

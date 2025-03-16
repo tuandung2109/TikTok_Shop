@@ -1,0 +1,64 @@
+﻿@model ThuongMaiDienTu.Models.CuaHang;
+
+@{
+    ViewData["Title"] = "Sửa Cửa Hàng";
+}
+
+<div class="container-fluid mt-4">
+    <h2 class="text-center text-success">
+        <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa cửa hàng
+    </h2>
+    <hr />
+
+    <div class="row">
+        <div class="col-8">
+            <form id="editStoreForm">
+                <div class="mb-3">
+                    <label asp-for="Ten_Cua_Hang" class="form-label">Tên Cửa Hàng</label>
+                    <input asp-for="Ten_Cua_Hang" class="form-control"/>
+                    <span asp-validation-for="Ten_Cua_Hang" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Mo_Ta" class="form-label">Mô Tả</label>
+                    <input asp-for="Mo_Ta" class="form-control" />
+                    <span asp-validation-for="Mo_Ta" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+</div>
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<script>
+    document.getElementById("editStoreForm").addEventListener("submit", function(event){
+        event.preventDefault();
+
+        let formData = {
+            Ten_Cua_Hang: document.getElementById("Ten_Cua_Hang").value,
+            Mo_Ta: document.getElementById("Mo_Ta").value
+        };
+
+        fetch('@Url.Action("Edit", "Store")',
+            {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(formData)
+            }
+        )
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(data.message);
+                window.location.href = "@Url.Action("Profile", "Store")";
+            }
+            else {
+                alert("Lỗi: " + data.message);
+            }
+        })
+        .catch(Error => console.error("Lỗi", error));
+    });
+</script>
