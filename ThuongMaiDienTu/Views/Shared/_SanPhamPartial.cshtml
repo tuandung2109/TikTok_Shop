@@ -1,0 +1,56 @@
+﻿@model List<ThuongMaiDienTu.Models.SanPham>
+
+<table class="table table-striped text-center">
+    <thead>
+        <tr>
+            <th>Sản Phẩm</th>
+            <th>Số Lượng</th>
+            <th>Giá Sản Phẩm</th>
+            <th>Ngày Cập nhật</th>
+            <th>Thao Tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="row-@item.Id">
+                <td class="d-flex align-items-center">
+                    <img src="@item.Hinh_Anh" class="rounded me-2" width="50" height="50" alt="@item.Ten_San_Pham">
+                    <span>@item.Ten_San_Pham</span>
+                </td>
+                <td>@item.So_Luong_Ton</td>
+                <td>
+                    <span class="text-decoration-line-through">@item.Gia_Goc.ToString("N0") VND</span><br>
+                    <strong class="text-danger">@item.Gia_Khuyen_Mai?.ToString("N0") VND</strong>
+                </td>
+                <td>@item.Ngay_Tao.ToString("HH:mm - dd/MM/yyyy")</td>
+                <td>
+                    <a href="/SanPham/Edit/@item.Id" class="btn btn-primary btn-sm">Chỉnh Sửa</a>
+                    <button class="btn btn-danger btn-sm xoaSanPham" data-id="@item.Id">Xóa</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    document.querySelectorAll(".xoaSanPham").forEach(button => {
+        button.addEventListener("click", function(event) {
+            let productId = this.getAttribute("data-id");  // Lấy ID sản phẩm từ data-id
+
+            if (confirm("Bạn có muốn xoá sản phẩm ID " + productId + " không?")) {
+
+                fetch('@Url.Action("Delete", "SanPham")', {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(productId)
+                })
+                .then(response => response.json())  // Gọi json() đúng cách
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById("row-" + productId).remove();
+                })
+                .catch(error => console.error("Lỗi:", error));
+            }
+        });
+    });
+</script>
