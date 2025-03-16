@@ -1,28 +1,11 @@
-﻿@model IEnumerable<ThuongMaiDienTu.Models.SanPham>
+﻿@model List<ThuongMaiDienTu.Models.SanPham>
 
-<h2>Danh sách sản phẩm</h2>
-<a href="@Url.Action("Create", "Product")" class="btn btn-primary">Thêm sản phẩm</a>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Tên sản phẩm</th>
-            <th>Giá</th>
-            <th>Số lượng</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Ten_San_Pham</td>
-                <td>@item.Gia_Goc</td>
-                <td>@item.So_Luong_Ton</td>
-                <td>
-                    <a href="@Url.Action("Edit", "Product", new { id = item.Id })" class="btn btn-warning">Sửa</a>
-                    <a href="@Url.Action("Delete", "Product", new { id = item.Id })" class="btn btn-danger">Xóa</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@{
+    ViewData["Title"] = "Danh sách sản phẩm";
+}
+<a href="/SanPham/Create" class="btn btn-primary btn-sm">Thêm</a>
+
+<div class="container mt-4">
+    <h3 class="mb-3">Danh Sách Sản Phẩm</h3>
+    @await Html.PartialAsync("_SanPhamPartial", Model)
+</div>

@@ -1,19 +1,52 @@
 ﻿@model ThuongMaiDienTu.Models.SanPham
 
-<h2>Thêm sản phẩm</h2>
+@{
+    ViewData["Title"] = "Thêm Sản Phẩm";
+}
 
-<form asp-action="Create">
+<h2>Thêm Sản Phẩm</h2>
+
+<form method="post" asp-action="Create" enctype="multipart/form-data" class="mx-auto" style="max-width: 500px;">
+
     <div class="form-group">
-        <label asp-for="Ten_San_Pham"></label>
-        <input asp-for="Ten_San_Pham" class="form-control" />
+        <label asp-for="Id_Danh_Muc">Danh Mục</label>
+        <select asp-for="Id_Danh_Muc" class="form-control" asp-items="ViewBag.DanhMuc"></select>
+
     </div>
+
     <div class="form-group">
-        <label asp-for="Gia_Goc"></label>
-        <input asp-for="Gia_Goc" class="form-control" />
+        <label asp-for="Ten_San_Pham">Tên Sản Phẩm</label>
+        <input asp-for="Ten_San_Pham" class="form-control" type="text"/>
     </div>
+
     <div class="form-group">
-        <label asp-for="So_Luong_Ton"></label>
-        <input asp-for="So_Luong_Ton" class="form-control" />
+        <label asp-for="Mo_Ta">Mô Tả</label>
+        <textarea asp-for="Mo_Ta" class="form-control"></textarea>
     </div>
-    <button type="submit" class="btn btn-primary">Thêm</button>
+
+    <div class="form-group">
+        <label asp-for="Gia_Goc">Giá Gốc</label>
+        <input asp-for="Gia_Goc" type="number" class="form-control" step="0.01" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Giam_Gia">Giảm Giá (%)</label>
+        <input asp-for="Giam_Gia" type="number" class="form-control" step="0.01" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="So_Luong_Ton">Số Lượng Tồn</label>
+        <input asp-for="So_Luong_Ton" type="number" class="form-control" />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="HinhAnhFile">Hình Ảnh</label>
+        <input type="file" asp-for="HinhAnhFile" class="form-control" />
+    </div>
+
+    <br />
+    <button type="submit" class="btn btn-primary">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Hủy</a>
 </form>
+<div asp-validation-summary="All" class="text-danger"></div>
+

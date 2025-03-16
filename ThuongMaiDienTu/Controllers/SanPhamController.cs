@@ -1,25 +1,47 @@
 using Microsoft.AspNetCore.Mvc;
 using ThuongMaiDienTu.Repositories;
 using ThuongMaiDienTu.Models;
+using ThuongMaiDienTu.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ThuongMaiDienTu.Controllers
 {
     public class SanPhamController : Controller
     {
         private readonly ISanPhamRepository _sanPhamRepository;
-        public SanPhamController(ISanPhamRepository sanPhamRepository)
+        private readonly DbContextApp _context;
+        public SanPhamController(ISanPhamRepository sanPhamRepository, DbContextApp context)
         {
             _sanPhamRepository = sanPhamRepository;
+            _context = context;
         }
     
         // GET: SanPhamController
         public IActionResult Index()
         {
-            var sanPhams =  _sanPhamRepository.GetAll();
+            var isSeller = HttpContext.Session.GetInt32("IsSeller");
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var cuaHangId = HttpContext.Session.GetInt32("StoreId");
+            if (isSeller == 1) {
+                var sanPham = _sanPhamRepository.GetAll().Where(sp => sp.Id_Cua_Hang == cuaHangId).ToList();
+                return View(sanPham);
+            }
+            var sanPhams =  _sanPhamRepository.GetAll().ToList();
             return View(sanPhams);
+        }
+        public SelectList GetListDanhMuc()
+        {
+            var danhMuc = _context.DanhMucs.ToList();
+            var danhMucList = danhMuc.Select(dm => new SelectListItem
+            {
+                Value = dm.Id.ToString(),
+                Text = dm.Ten_Danh_Muc
+            });
+            return new SelectList(danhMucList, "Value", "Text");
         }
         public IActionResult Create()
         {
+            ViewBag.DanhMuc = GetListDanhMuc();
             return View();
         }
         [HttpPost]
@@ -27,9 +49,26 @@ namespace ThuongMaiDienTu.Controllers
         {
             if (ModelState.IsValid)
             {
-                 _sanPhamRepository.Add(sanPham);
-                return RedirectToAction("Index");
+                sanPham.Id_Cua_Hang = (int) HttpContext.Session.GetInt32("StoreId");
+
+                if (sanPham.HinhAnhFile != null && sanPham.HinhAnhFile.Length > 0)
+                {
+                    string fileName = Path.GetFileName(sanPham.HinhAnhFile.FileName);
+                    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\SanPham", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        sanPham.HinhAnhFile.CopyTo(stream);
+                    }
+
+                    sanPham.Hinh_Anh = "/images/SanPham/" + fileName;
+                }
+
+                _sanPhamRepository.Add(sanPham);
+
+                return RedirectToAction("Index", "SanPham");
             }
+            ViewBag.DanhMuc = GetListDanhMuc();
             return View(sanPham);
         }
         public IActionResult Edit(int id)
@@ -51,14 +90,11 @@ namespace ThuongMaiDienTu.Controllers
             }
             return View(sanPham);
         }
-        public IActionResult Delete(int id)
+        [HttpDelete]
+        public IActionResult Delete([FromBody] int id)
         {
-            var sanPham =  _sanPhamRepository.GetById(id);
-            if (sanPham == null)
-            {
-                return NotFound();
-            }
-            return View(sanPham);
+            _sanPhamRepository.Delete(id);
+            return Json(new {message = "Xoá thành công"});
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
