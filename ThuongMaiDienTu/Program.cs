@@ -11,6 +11,9 @@ builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builde
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IBannerRepository, BannerRepository>();
+builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
+
 
 builder.Services.AddSession(options =>
 {

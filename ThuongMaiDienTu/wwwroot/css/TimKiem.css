@@ -1,0 +1,109 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+ 
+    text-align: center;
+}
+
+
+/* ========== Danh sách sản phẩm ========== */
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Thiết lập 5 cột */
+    gap: 50px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.product-item {
+    background: #eaeaea;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: left;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+    .product-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+.product-image {
+    width: 100%;
+    height: 180px;
+    background-color: #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #777;
+    border-radius: 5px;
+}
+
+img {
+    object-fit: cover;
+}
+
+.product-list::after {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 0;
+    grid-column: span 5;
+}
+
+/* Bỏ gạch chân và chỉnh màu chữ trong product-item */
+.product-item a {
+    text-decoration: none; /* Bỏ gạch chân */
+    color: black; /* Màu chữ mặc định */
+    display: block; /* Giúp toàn bộ khối có thể click */
+    height: 100%; /* Chiếm hết chiều cao thẻ cha */
+}
+
+/* Khi hover vào sản phẩm, đổi màu chữ */
+.product-item:hover a {
+    color: black; /* Giữ nguyên màu khi hover, có thể đổi nếu muốn nổi bật */
+}
+
+/* Tùy chỉnh các đoạn chữ bên trong */
+.product-item p {
+    margin: 8px 0;
+    font-size: 14px; /* Cỡ chữ chuẩn */
+}
+
+    /* Tên sản phẩm in đậm và to */
+    .product-item p strong {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333; /* Màu xám đậm */
+    }
+
+    /* Mô tả sản phẩm (chữ nhạt) */
+    .product-item p:nth-of-type(2) {
+        color: #666; /* Màu xám nhạt */
+        font-size: 13px;
+    }
+
+/* Giá gốc (có gạch) */
+.product-item del {
+    color: #888;
+    font-size: 13px;
+}
+
+/* Giá giảm */
+.product-item p:nth-of-type(4) {
+    color: red;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Giá khuyến mãi */
+.product-item p:last-child {
+    color: #d0021b; /* Đỏ đậm */
+    font-size: 16px;
+    font-weight: bold;
+}

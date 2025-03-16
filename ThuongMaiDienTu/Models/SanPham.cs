@@ -44,5 +44,8 @@ namespace ThuongMaiDienTu.Models
 
         [StringLength(500)]
         public string? Hinh_Anh { get; set; }
+
+        // ✅ Thêm danh sách đánh giá (Navigation Property)
+        public virtual ICollection<DanhGia> DanhGias { get; set; } = new List<DanhGia>();
     }
 }
