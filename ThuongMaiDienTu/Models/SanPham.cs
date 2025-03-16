@@ -33,6 +33,7 @@ namespace ThuongMaiDienTu.Models
         [Precision(10, 2)]
         public decimal? Giam_Gia { get; set; } // Mức giảm giá (nếu có)
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         [Precision(10, 2)]
         public decimal? Gia_Khuyen_Mai { get; set; } // Giá sau khuyến mãi
 
@@ -44,5 +45,8 @@ namespace ThuongMaiDienTu.Models
 
         [StringLength(500)]
         public string? Hinh_Anh { get; set; }
+
+        [NotMapped]
+        public IFormFile? HinhAnhFile { get; set; }
     }
 }
