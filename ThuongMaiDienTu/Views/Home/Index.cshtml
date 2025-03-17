@@ -1,28 +1,33 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
+    // Layout = null;
 }
 
-<!-- Banner Slideshow -->
-<div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
-    <!-- Dấu hiệu chỉ số (Indicators) -->
-    <div class="carousel-indicators">
-        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="0" class="active"></button>
-        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="2"></button>
-    </div>
+@model List<ThuongMaiDienTu.Models.SanPham>
+<link rel="stylesheet" href="@Url.Content("~/css/Index.css")">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
-    <!-- Ảnh Banner -->
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img src="~/images/banner1.png" class="d-block w-100" alt="Banner 1">
+<!-- Banner Slideshow -->
+ @if (ViewBag.Banners != null && ViewBag.Banners.Count > 0)
+{
+    <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (int i = 0; i < ViewBag.Banners.Count; i++)
+            {
+                <button type="button" data-bs-target="#bannerCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+            }
         </div>
-        <div class="carousel-item">
-            <img src="~/images/banner2.jpg" class="d-block w-100" alt="Banner 2">
+
+        <div class="carousel-inner">
+            @for (int i = 0; i < ViewBag.Banners.Count; i++)
+            {
+                var banner = ViewBag.Banners[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <img src="@Url.Content(banner.Hinh_Anh)" class="d-block w-100" alt="@banner.Tieu_De">
+                </div>
+            }
         </div>
-        <div class="carousel-item">
-            <img src="~/images/banner3.png" class="d-block w-100" alt="Banner 3">
-        </div>
-    </div>
 
     <!-- Nút điều hướng -->
     <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
@@ -32,3 +37,44 @@
         <span class="carousel-control-next-icon"></span>
     </button>
 </div>
+}
+
+<main>
+    <div class="filter-container">
+        <label for="category">Bộ Lọc</label>
+        <select id="category" onchange="filterByCategory()">
+            <option value="0">Tất cả danh mục</option>
+            @foreach (var danhMuc in ViewBag.DanhMucs)
+            {
+                <option value="@danhMuc.Id" selected="@(ViewBag.SelectedDanhMuc == danhMuc.Id ? "selected" : null)">
+                    @danhMuc.Ten_Danh_Muc
+                </option>
+            }
+        </select>
+    </div>
+
+    
+    <div class="product-list">
+        @foreach (var sanPham in Model)
+        {
+            <div class="product-item">
+                <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })">
+                    <div class="product-image">
+                        <img src="@Url.Content(sanPham.Hinh_Anh)" alt="@sanPham.Ten_San_Pham" style="width:100%; height:180px; object-fit:cover;">
+                    </div>
+                    <p><strong>@sanPham.Ten_San_Pham</strong></p>
+                    @*<p>Giá: <del>@sanPham.Gia_Goc.ToString("N0") VNĐ</del></p>*@
+                    <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
+                    <p style="font-weight: bold;">Giá khuyến mãi: @(sanPham.Gia_Goc - sanPham.Giam_Gia) VNĐ</p>
+                </a>
+            </div>
+        }
+    </div>
+</main>
+
+<script>
+    function filterByCategory() {
+        var selectedCategory = document.getElementById("category").value;
+        window.location.href = '@Url.Action("Index", "Home")' + '?danhMucId=' + selectedCategory;
+    }
+</script>

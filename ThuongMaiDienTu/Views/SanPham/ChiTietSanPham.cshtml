@@ -1,0 +1,47 @@
+﻿@model ThuongMaiDienTu.Models.SanPham
+
+@{
+    ViewData["Title"] = "Chi Tiết Sản Phẩm";
+    Layout = "_Layout";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/css/ChiTietSanPham.css")">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+<main>
+    <div class="product-detail">
+        <div class="image">
+            <img src="@Url.Content(Model.Hinh_Anh)" alt="@Model.Ten_San_Pham">
+        </div>
+        <div class="info">
+            <h1>@Model.Ten_San_Pham</h1>
+            @*<p>⭐ 5/5 từ 3 đánh giá</p>*@
+            <p>⭐ @ViewBag.TrungBinhSao.ToString("0.0")/5 từ @ViewBag.TongDanhGia đánh giá</p>
+            <p><del>@Model.Gia_Goc.ToString("N0") VNĐ</del> <strong>@(Model.Gia_Goc - Model.Giam_Gia) VNĐ</strong></p>
+            <p>Số lượng: <input type="number" value="1" min="1" max="@Model.So_Luong_Ton"> @Model.So_Luong_Ton sản phẩm có sẵn</p>
+            <button class="add-to-cart">Thêm vào giỏ hàng</button>
+        </div>
+    </div>
+
+    <div class="description">
+        <h2>Mô tả sản phẩm</h2>
+        <p>@Model.Mo_Ta</p>
+
+
+    </div>
+
+    <div class="review">
+        <h2>Đánh Giá Sản Phẩm</h2>
+
+        @foreach (var danhGia in ViewBag.DanhGias)
+        {
+            <div class="review-item">
+                <p><strong>@danhGia.NguoiDung.Ho_Ten</strong> - @danhGia.Ngay_Danh_Gia.ToString("dd/MM/yyyy")</p>
+                <p>⭐ @danhGia.So_Sao.ToString()/5</p>
+                <p>@danhGia.Noi_Dung</p>
+            </div>
+        }
+
+    </div>
+</main>

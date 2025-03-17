@@ -1,0 +1,108 @@
+﻿========== Bộ lọc ==========
+.filter-container {
+    transform: translateX(500px);
+    transform: translateY(10px);
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+    .filter-container label {
+        font-size: 16px;
+        font-weight: bold;
+        color: #000;
+    }
+
+select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+/* Danh sách sản phẩm */
+.product-list {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 25px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+/* Mỗi sản phẩm */
+.product-item {
+    background: #eaeaea;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: left;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+    .product-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+/* Ảnh sản phẩm */
+.product-image img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* Định dạng link sản phẩm */
+.product-item a {
+    text-decoration: none;
+    color: black;
+    display: block;
+    height: 100%;
+}
+
+.product-item:hover a {
+    color: black;
+}
+
+/* Thông tin sản phẩm */
+.product-item p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+    /* Tên sản phẩm */
+    .product-item p strong {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Giá gốc */
+    .product-item p:nth-of-type(2) {
+        color: #666;
+        font-size: 13px;
+    }
+
+/* Giá gạch ngang */
+.product-item del {
+    color: #888;
+    font-size: 13px;
+}
+
+/* Giá giảm */
+.product-item p:nth-of-type(4) {
+    color: red;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* Giá khuyến mãi */
+.product-item p:last-child {
+    color: #d0021b;
+    font-size: 16px;
+    font-weight: bold;
+}

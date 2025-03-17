@@ -103,15 +103,26 @@ namespace ThuongMaiDienTu.Controllers
             return RedirectToAction("Index");
         }
 
-        // Thêm luống 2 : 
-        public IActionResult ChiTiet(int id)
+        public IActionResult ChiTietSanPham(int id)
         {
-            var sanPham = _sanPhamRepository.GetById(id);
+            var sanPham = _sanPhamRepository.GetSanPhamWithDanhGia(id);
+
             if (sanPham == null)
             {
                 return NotFound();
             }
+
+            // ✅ Lấy danh sách đánh giá
+            var danhGiaList = sanPham.DanhGias.ToList();
+            double trungBinhSao = danhGiaList.Any() ? danhGiaList.Average(d => d.So_Sao) : 0;
+            int tongDanhGia = danhGiaList.Count();
+
+            ViewBag.TrungBinhSao = trungBinhSao;
+            ViewBag.TongDanhGia = tongDanhGia;
+            ViewBag.DanhGias = danhGiaList;
+
             return View(sanPham);
         }
+
     }
 }
