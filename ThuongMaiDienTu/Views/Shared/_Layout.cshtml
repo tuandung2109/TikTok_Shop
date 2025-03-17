@@ -31,11 +31,26 @@
             </div>
 
             <!-- Thanh tìm kiếm -->
+            @*
             <div class="d-flex align-items-center search">
                 <span><i class="fa-solid fa-magnifying-glass"></i></span>
                 <input type="text" class="form-control me-2" placeholder="Tìm kiếm sản phẩm ...">
                 <button class="btn btn-dark">Tìm Kiếm</button>
             </div>
+            *@
+
+            <!-- Chỉnh lại thanh tìm kiếm để tạo cái action cho nó-->
+            <div class="d-flex align-items-center search">
+                <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex w-100">
+                    <span class="me-2">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control me-2" placeholder="Tìm kiếm sản phẩm...">
+                    <button type="submit" class="btn btn-dark">Tìm Kiếm</button>
+                </form>
+            </div>
+
+
 
             <!-- Icon giỏ hàng, thông báo và nút đăng nhập -->
             <div class="d-flex align-items-center">

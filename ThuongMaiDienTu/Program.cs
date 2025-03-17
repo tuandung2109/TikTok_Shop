@@ -10,8 +10,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
+builder.Services.AddScoped<IBannerRepository, BannerRepository>();
+builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
+builder.Services.AddScoped<IStoreRepository, StoreRepository>();
+
 
 builder.Services.AddSession(options =>
 {
