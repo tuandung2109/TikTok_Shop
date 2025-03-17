@@ -12,10 +12,10 @@ namespace ThuongMaiDienTu.Controllers
         private readonly IBannerRepository _bannerRepository;
         private readonly IDanhMucRepository _danhMucRepository;
         private readonly ILogger<HomeController> _logger;
-       
 
 
-        public HomeController(ISanPhamRepository sanPhamRepository, IBannerRepository bannerRepository , IDanhMucRepository danhMucRepository, ILogger<HomeController> logger)
+
+        public HomeController(ISanPhamRepository sanPhamRepository, IBannerRepository bannerRepository, IDanhMucRepository danhMucRepository, ILogger<HomeController> logger)
         {
             _sanPhamRepository = sanPhamRepository;
             _bannerRepository = bannerRepository;
@@ -46,15 +46,6 @@ namespace ThuongMaiDienTu.Controllers
 
             return View(sanPhams);
         }
-        public IActionResult TimKiem(string tuKhoa)
-            return View();
-        }
-
-        public IActionResult TrangChu()
-        {
-            List<SanPham> sanPhams = _sanPhamRepository.GetAllSanPhams();
-            return View(sanPhams);
-        }
 
         [HttpGet]
         public IActionResult TimKiem(string tuKhoa)
@@ -63,7 +54,7 @@ namespace ThuongMaiDienTu.Controllers
             ViewBag.TuKhoa = tuKhoa; // Lưu từ khóa để hiển thị lại trên giao diện
             return View(ketQua);
         }
-        // ✅ Đưa ChiTietSanPham vào trong class
+
         public IActionResult ChiTietSanPham(int id)
         {
             var sanPham = _sanPhamRepository.GetById(id); // ⚙️ Dùng đúng tên biến
@@ -79,10 +70,7 @@ namespace ThuongMaiDienTu.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            List<SanPham> ketQua = _sanPhamRepository.TimKiemSanPham(tuKhoa);
-            ViewBag.TuKhoa = tuKhoa; // Lưu từ khóa để hiển thị lại trên giao diện
-            return View(ketQua);
-
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         //[HttpGet]

@@ -7,22 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-//builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
-
-
-// Đăng ký DbContext
-builder.Services.AddDbContext<DbContextApp>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
-
-// Đăng ký Repository
-builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
-
+builder.Services.AddDbContext<DbContextApp>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();
 builder.Services.AddScoped<IBannerRepository, BannerRepository>();
 builder.Services.AddScoped<IDanhMucRepository, DanhMucRepository>();
+builder.Services.AddScoped<IStoreRepository, StoreRepository>();
 
 
 builder.Services.AddSession(options =>
@@ -54,6 +45,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=TrangChu}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

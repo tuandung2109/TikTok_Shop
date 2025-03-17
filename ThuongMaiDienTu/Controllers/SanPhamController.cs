@@ -94,7 +94,7 @@ namespace ThuongMaiDienTu.Controllers
         public IActionResult Delete([FromBody] int id)
         {
             _sanPhamRepository.Delete(id);
-            return Json(new {message = "Xo� th�nh c�ng"});
+            return Json(new {message = "Xóa Thành Công"});
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
