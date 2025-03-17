@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+ï»¿using Microsoft.AspNetCore.Mvc;
 using ThuongMaiDienTu.Repositories;
 using ThuongMaiDienTu.Models;
 using ThuongMaiDienTu.Data;
@@ -94,13 +94,24 @@ namespace ThuongMaiDienTu.Controllers
         public IActionResult Delete([FromBody] int id)
         {
             _sanPhamRepository.Delete(id);
-            return Json(new {message = "Xoá thành công"});
+            return Json(new {message = "Xoï¿½ thï¿½nh cï¿½ng"});
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
             _sanPhamRepository.Delete(id);
             return RedirectToAction("Index");
+        }
+
+        // ThÃªm luá»‘ng 2 : 
+        public IActionResult ChiTiet(int id)
+        {
+            var sanPham = _sanPhamRepository.GetById(id);
+            if (sanPham == null)
+            {
+                return NotFound();
+            }
+            return View(sanPham);
         }
     }
 }

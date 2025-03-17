@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Trang Chủ";
+    Layout = null;
+}
+@model List<ThuongMaiDienTu.Models.SanPham>
+
+
+<link rel="stylesheet" href="@Url.Content("~/css/TC.css")">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<header>
+    <a href="@Url.Action("TrangChu", "Home")" class="logo">
+        <img src="@Url.Content("~/images/logo.png")" alt="TikTok Shop Logo" class="logo-img">
+        TikTokShop
+    </a>
+
+    <div class="search-bar">
+        <form asp-controller="Home" asp-action="TimKiem" method="get">
+            <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" placeholder="Tìm kiếm sản phẩm...">
+            <button type="submit" class="search-button">Tìm Kiếm</button>
+        </form>
+    </div>
+
+    <div class="icons">
+        <i class="fas fa-shopping-cart"></i>
+        <i class="fas fa-user"></i>
+    </div>
+    <div class="DangNhap">
+        <a asp-controller="Account" asp-action="Login" class="BtnDangNhap"> Đăng nhập </a>
+    </div>
+
+</header>
+
+<div class="banner">
+    <div class="banner-text">banner</div>
+</div>
+
+<main>
+    <div class="filter-container">
+        <label for="category">Bộ Lọc</label>
+        <select id="category">
+            <option value="all">Tất cả danh mục</option>
+        </select>
+    </div>
+
+    <div class="product-list">
+        @*
+        @foreach (var sanPham in Model)
+
+        {
+            <div class="product-item">
+                <div class="product-image">
+                    <img src="@Url.Content(sanPham.Hinh_Anh)" alt="@sanPham.Ten_San_Pham" style="width:100%; height:180px; object-fit:cover;">
+                </div>
+                <p><strong>@sanPham.Ten_San_Pham</strong></p>
+                <p>@sanPham.Mo_Ta</p>
+                <p>Giá: <del>@sanPham.Gia_Goc.ToString("N0") VNĐ</del></p>
+                <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
+                <p style="font-weight: bold;">Giá khuyến mãi: @(sanPham.Gia_Goc - sanPham.Giam_Gia) VNĐ</p>
+            </div>
+        }
+        *@
+
+        @foreach (var sanPham in Model)
+        {
+            <div class="product-item">
+                <a href="@Url.Action("ChiTietSanPham", "Home", new { id = sanPham.Id })">
+                    <div class="product-image">
+                        <img src="@Url.Content(sanPham.Hinh_Anh)" alt="@sanPham.Ten_San_Pham" style="width:100%; height:180px; object-fit:cover;">
+                    </div>
+                    <p><strong>@sanPham.Ten_San_Pham</strong></p>
+    
+                    <p>Giá: <del>@sanPham.Gia_Goc.ToString("N0") VNĐ</del></p>
+                    <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
+                    <p style="font-weight: bold;">Giá khuyến mãi: @(sanPham.Gia_Goc - sanPham.Giam_Gia) VNĐ</p>
+                </a>
+            </div>
+        }
+    </div>
+</main>

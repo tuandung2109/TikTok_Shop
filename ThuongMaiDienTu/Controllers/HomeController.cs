@@ -1,32 +1,39 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using ThuongMaiDienTu.Repositories;
 using ThuongMaiDienTu.Models;
+using System.Collections.Generic;
 
 namespace ThuongMaiDienTu.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ISanPhamRepository _sanPhamRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ISanPhamRepository sanPhamRepository)
         {
-            _logger = logger;
+            _sanPhamRepository = sanPhamRepository;
         }
 
-        public IActionResult Index()
+        public IActionResult TrangChu()
         {
-            return View();
+            List<SanPham> sanPhams = _sanPhamRepository.GetAllSanPhams();
+            return View(sanPhams);
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public IActionResult TimKiem(string tuKhoa)
         {
-            return View();
+            List<SanPham> ketQua = _sanPhamRepository.TimKiemSanPham(tuKhoa);
+            ViewBag.TuKhoa = tuKhoa; // Lưu từ khóa để hiển thị lại trên giao diện
+            return View(ketQua);
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        // ✅ Đưa ChiTietSanPham vào trong class
+        public IActionResult ChiTietSanPham(int id)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var sanPham = _sanPhamRepository.GetById(id); // ⚙️ Dùng đúng tên biến
+            if (sanPham == null)
+                return NotFound();
+            return View(sanPham); // View ChiTietSanPham.cshtml
         }
     }
 }
