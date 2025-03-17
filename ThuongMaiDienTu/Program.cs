@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 
 // Đăng ký DbContext
 builder.Services.AddDbContext<DbContextApp>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConnSql")));
 
 // Đăng ký Repository
 builder.Services.AddScoped<ISanPhamRepository, SanPhamRepository>();

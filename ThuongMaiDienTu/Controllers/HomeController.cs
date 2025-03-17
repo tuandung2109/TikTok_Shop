@@ -2,16 +2,24 @@
 using ThuongMaiDienTu.Repositories;
 using ThuongMaiDienTu.Models;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace ThuongMaiDienTu.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ILogger<HomeController> _logger;
         private readonly ISanPhamRepository _sanPhamRepository;
 
-        public HomeController(ISanPhamRepository sanPhamRepository)
+
+        public HomeController(ISanPhamRepository sanPhamRepository, ILogger<HomeController> logger)
         {
+            _logger = logger;
             _sanPhamRepository = sanPhamRepository;
+        }
+        public IActionResult Index()
+        {
+            return View();
         }
 
         public IActionResult TrangChu()
@@ -34,6 +42,16 @@ namespace ThuongMaiDienTu.Controllers
             if (sanPham == null)
                 return NotFound();
             return View(sanPham); // View ChiTietSanPham.cshtml
+        }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

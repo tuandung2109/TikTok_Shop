@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "Thông tin cửa hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card text-center">
+                <div class="card-header bg-warning">
+                    <h4>Thông báo</h4>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@ViewBag.ErrorMessage</h5>
+                    <p class="card-text">Bạn chưa đăng ký thông tin cửa hàng hoặc thông tin không tồn tại.</p>
+                    <a href="@Url.Action("Create", "Store")" class="btn btn-primary">Tạo cửa hàng mới</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
