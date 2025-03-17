@@ -1,0 +1,83 @@
+﻿@model List<ThuongMaiDienTu.Models.SanPham>
+
+<h2 class="text-center mt-4">🛒 Giỏ Hàng Của Bạn</h2>
+
+<table class="table table-hover table-bordered mt-3">
+    <thead class="table-dark text-center">
+        <tr>
+            <th>Hình Ảnh</th>
+            <th>Sản Phẩm</th>
+            <th>Giá</th>
+            <th>Số Lượng</th>
+            <th>Thao Tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="align-middle text-center row-@item.Id">
+                <td>
+                    <img src="@item.Hinh_Anh" width="60" height="60" class="rounded" />
+                </td>
+                <td class="fw-bold">@item.Ten_San_Pham</td>
+                <td class="text-danger fw-bold">@item.Gia_Khuyen_Mai VNĐ</td>
+                <td>
+                    <input type="number" class="form-control text-center mx-auto soLuongGioHang" data-id="@item.Id" value="@item.So_Luong_Ton" min="1" style="width: 80px;">
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-sm xoaCart" data-id="@item.Id">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="text-end mt-3">
+    <a href="/Checkout" class="btn btn-success btn-lg">
+        <i class="fas fa-shopping-cart"></i> Tạo đơn hàng
+    </a>
+</div>
+
+<script>
+    document.querySelectorAll(".soLuongGioHang").forEach(input => {
+        input.addEventListener("input", function() {
+            let idSanPham = this.getAttribute("data-id");
+            let soLuongMoi = parseInt(this.value, 10);
+
+            fetch('/Cart/UpdateCart', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: idSanPham, soLuong: soLuongMoi })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success){
+                    document.getElementById("cart_count").innerText = data.soLuong;
+                }
+                
+            })
+            .catch(error => console.error("Lỗi:", error));
+        });
+    })
+
+    document.querySelectorAll(".xoaCart").forEach(button =>{
+        button.addEventListener("click", function(){
+            if (confirm("Bạn có chắc muốn xoá không")){
+                let id = this.getAttribute("data-id");
+
+                fetch("/Cart/DeleteCart", {
+                    method: "DELETE",
+                    headers: {"Content-Type" : "application/json"},
+                    body: JSON.stringify(id)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementsByClassName("row-"+id)[0].remove();
+                    document.getElementById("cart_count").innerText = data.soLuong;
+                })
+            }
+        })
+    })
+</script>
