@@ -3,102 +3,282 @@
     var user = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
     var isSeller = HttpContextAccessor.HttpContext.Session.GetInt32("IsSeller");
     var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("cart_count");
+    var isAdmin = HttpContextAccessor.HttpContext.Session.GetInt32("IsAdmin");
 }
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewData["Title"] - TikTok Shop</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css">
-    <style>
-        .icon {
-            font-size: 30px;
-        }
-    </style>
+    <link rel="stylesheet" href="~/css/optimized_header.css">
+
 </head>
+
 <body>
-    <header class="shadow-sm bg-white">
-        <div class="container-fluid d-flex justify-content-between align-items-center">
-            <!-- Logo -->
-            <div class="d-flex align-items-center">
-                <a href="@Url.Action("Index", "Home")">
-                    <img src="~/images/tiktok-shop-logo-1.jpg" alt="TikTok Shop">
+
+    <header class="header">
+        <nav class="navbar navbar-expand-lg navbar-light border-bottom">
+            <div class="container">
+                <!-- Logo bên trái -->
+                <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                    <img src="~/images/tiktok-shop-logo-1.jpg" alt="TikTok Shop" class="img-fluid">
                 </a>
-            </div>
 
-            <!-- Thanh tìm kiếm -->
-            @*
-            <div class="d-flex align-items-center search">
-                <span><i class="fa-solid fa-magnifying-glass"></i></span>
-                <input type="text" class="form-control me-2" placeholder="Tìm kiếm sản phẩm ...">
-                <button class="btn btn-dark">Tìm Kiếm</button>
-            </div>
-            *@
-
-            <!-- Chỉnh lại thanh tìm kiếm để tạo cái action cho nó-->
-            <div class="d-flex align-items-center search">
-                <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex w-100">
-                    <span class="me-2">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </span>
-                    <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control me-2" placeholder="Tìm kiếm sản phẩm...">
-                    <button type="submit" class="btn btn-dark">Tìm Kiếm</button>
-                </form>
-            </div>
-
-
-
-            <!-- Icon giỏ hàng, thông báo và nút đăng nhập -->
-            <div class="d-flex align-items-center">
-                <a href="@Url.Action("Index", "Cart")">
-                    <div class="position-relative me-3">
-                        <i class="fa-solid fa-cart-shopping icon"></i>
-                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="cart_count">@cartCount</span>
-                    </div>
-                </a>
-                
-                <div class="position-relative me-3">
-                    <i class="fa-solid fa-bell icon"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">1</span>
+                <!-- Desktop -->
+                <!-- Tìm Kiếm -->
+                <div class="d-none d-lg-flex flex-grow-1 justify-content-center">
+                    <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex search-form">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </span>
+                            <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control border-start-0"
+                            placeholder="Nhập tên sản phẩm...">
+                            <button type="submit" class="btn btn-dark">Tìm Kiếm</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="d-flex align-items-center">
+
+
+                <!-- Chức năng -->
+                <div class="d-none d-lg-flex align-items-center">
+
+                    <!-- Tài khoản và chức năng -->
                     @if (user != null)
                     {
-                        if (isSeller != null) {
-                            <!-- Nếu đã đăng nhập -->
-                            <div class="dropdown">
-                                <a href="#" class="dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa-solid fa-store icon"></i> 
+                        @if (isSeller == null && isAdmin == null)
+                        { 
+                            <!-- Giỏ hàng -->
+                            <a class="nav-link position-relative mx-1" href="@Url.Action("Index", "Cart")">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                @if (cartCount > 0)
+                                {
+                                    <span class="badge bg-danger rounded-circle badge-notification">@cartCount</span>
+                                }
+                            </a>
+                        }
+                        
+                        @if (isSeller != null)
+                        {
+                            <div class="dropdown mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdownStore" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-store"></i> Cửa Hàng
                                 </a>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                    <li><a class="dropdown-item" href="@Url.Action("Profile", "Store")">Profile Cửa Hàng</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Danh Sách Sản Phẩm</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownStore">
+                                    <li><a class="dropdown-item" href="@Url.Action("Profile", "Store")">Profile Cửa Hàng</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Danh Sách Sản Phẩm</a>
+                                    </li>
                                 </ul>
                             </div>
                         }
-                        
-                        <a href="@Url.Action("Profile", "Account")"><i class="fa-solid fa-user-tie icon"></i></a>
-                        <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger ms-2">Đăng Xuất</a>
+                        @if (isAdmin != null)
+                        {
+                            <div class="dropdown nav-item mx-1">
+                                <a class="nav-link dropdown-toggle" href="#" id="dropdownAdmin" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                     Quản Lý
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="dropdownAdmin">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "NguoiDung")">Quản Lý Người Dùng</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DanhMuc")">Quản Lý Danh Mục</a>
+                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Quản Lý Sản Phẩm</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        <a class="btn btn-outline-dark mx-1" href="@Url.Action("Profile", "Account")">
+                            <i class="fa-solid fa-user"></i> 
+                        </a>
+                        <a class=" btn btn-outline-danger btn ms-1" href="@Url.Action("Logout", "Account")">
+                            Đăng Xuất
+                        </a>
                     }
                     else
                     {
-                        <!-- Nếu chưa đăng nhập -->
-                        <button onclick="window.location.href='@Url.Action("Login", "Account")'" class="btn btn-dark">Đăng Nhập</button>
+                        <a class=" btn btn-outline-dark btn" href="@Url.Action("Login", "Account")">
+                            <i class="fa-solid fa-sign-in-alt"></i> Đăng Nhập
+                        </a>
                     }
                 </div>
+                <!-- Button toggle Offcanvas cho mobile (hiển thị trên d-lg-none) -->
+                <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileOffcanvas" aria-controls="mobileOffcanvas">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Offcanvas cho giao diện mobile -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileOffcanvas" aria-labelledby="mobileOffcanvasLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="mobileOffcanvasLabel">Menu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+            </div>
+            <div class="offcanvas-body">
+                <!-- Thanh tìm kiếm ngay đầu offcanvas -->
+                <form asp-controller="Home" asp-action="TimKiem" method="get" class="d-flex search-form">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control border-start-0"
+                            placeholder="Tìm kiếm sản phẩm...">
+                        <button type="submit" class="btn btn-dark">Tìm Kiếm</button>
+                    </div>
+                </form>
+                <!-- Các mục menu -->
+                <div class="mb-3">
+                    <a class="nav-link position-relative" href="@Url.Action("Index", "Cart")">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        @if (cartCount > 0)
+                        {
+                            <span class="badge bg-danger rounded-circle badge-notification">@cartCount</span>
+                        }
+                        <span class="ms-1">Giỏ hàng</span>
+                    </a>
+                </div>
+                @if (user != null)
+                {
+                    <div class="mb-3">
+                        <a class="nav-link" href="@Url.Action("Profile", "Account")">
+                            <i class="fa-solid fa-user"></i> Tài khoản của bạn
+                        </a>
+                    </div>
+                    @if (isSeller != null)
+                    {
+                        <div class="mb-3">
+                            <a class="nav-link" href="@Url.Action("Profile", "Store")">
+                                <i class="fa-solid fa-store"></i> Profile Cửa Hàng
+                            </a>
+                            <a class="nav-link" href="@Url.Action("Index", "SanPham")">
+                                <i class="fa-solid fa-boxes"></i> Danh Sách Sản Phẩm
+                            </a>
+                        </div>
+                    }
+                    @if (isAdmin != null)
+                    {
+                        <div class="mb-3">
+                            <a class="nav-link" href="@Url.Action("Index", "NguoiDung")">
+                                <i class="fa-solid fa-users"></i> Quản Lý Người Dùng
+                            </a>
+                            <a class="nav-link" href="@Url.Action("Index", "DanhMuc")">
+                                <i class="fa-solid fa-folder"></i> Quản Lý Danh Mục
+                            </a>
+                            <a class="nav-link" href="@Url.Action("Index", "SanPham")">
+                                <i class="fa-solid fa-cubes"></i> Quản Lý Sản Phẩm
+                            </a>
+                        </div>
+                    }
+                    <div>
+                        <a class="nav-link btn btn-outline-danger" href="@Url.Action("Logout", "Account")">
+                            <i class="fa-solid fa-sign-out-alt"></i> Đăng Xuất
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-3">
+                        <a class="nav-link btn btn-dark" href="@Url.Action("Login", "Account")">
+                            <i class="fa-solid fa-sign-in-alt"></i> Đăng Nhập
+                        </a>
+                    </div>
+                }
             </div>
         </div>
     </header>
 
-    <main class="container-fluid my-4">
+    <main class="container my-3">
         @RenderBody()
     </main>
+    <!-- Thêm phần này trước thẻ đóng </body> -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+        <div class="container">
+            <div class="row">
+                <!-- Thông tin công ty -->
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="mb-3">TikTok Shop</h5>
+                    <p class="small mb-2">Nền tảng mua sắm trực tuyến hàng đầu Việt Nam với các sản phẩm đa dạng, chính
+                        hãng và dịch vụ vận chuyển nhanh chóng.</p>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-location-dot me-2"></i>
+                        <p class="small mb-0">Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</p>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fa-solid fa-envelope me-2"></i>
+                        <p class="small mb-0">contact@tiktokshop.com</p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fa-solid fa-phone me-2"></i>
+                        <p class="small mb-0">1900 1888</p>
+                    </div>
+                </div>
 
+                <!-- Về chúng tôi -->
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="mb-3">Về Chúng Tôi</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Giới thiệu</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Tuyển dụng</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Điều khoản sử
+                                dụng</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Chính sách bảo
+                                mật</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Chính sách bảo
+                                hành</a></li>
+                    </ul>
+                </div>
+
+                <!-- Hỗ trợ -->
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="mb-3">Hỗ Trợ</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Trung tâm trợ
+                                giúp</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Hướng dẫn mua
+                                hàng</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Phương thức thanh
+                                toán</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Phương thức vận
+                                chuyển</a></li>
+                        <li class="mb-2"><a href="#" class="text-white text-decoration-none small">Chính sách đổi
+                                trả</a></li>
+                    </ul>
+                </div>
+
+                <!-- Kết nối -->
+                <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                    <h5 class="mb-3">Kết Nối Với Chúng Tôi</h5>
+                    <div class="d-flex mb-3">
+                        <a href="#" class="text-white me-3 fs-4"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3 fs-4"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white me-3 fs-4"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="text-white me-3 fs-4"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- Copyright -->
+            <div class="row mt-4 border-top border-secondary pt-3">
+                <div class="col-12">
+                    <p class="text-center small mb-0">
+                        © @DateTime.Now.Year Bài Tập Lớn LTW Nâng Cao
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
 </body>
+
 </html>

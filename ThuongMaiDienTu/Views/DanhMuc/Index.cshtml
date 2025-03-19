@@ -1,0 +1,73 @@
+﻿@model IEnumerable<ThuongMaiDienTu.Models.DanhMuc>
+
+@{
+    ViewData["Title"] = "Danh mục sản phẩm";
+}
+
+<h1>Quản lý danh mục sản phẩm</h1>
+
+@if (TempData["StatusMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["StatusMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Thêm danh mục mới</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Tên danh mục</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ten_Danh_Muc)
+                </td>
+                <td>
+                    @if (item.Trang_Thai == true)
+                    {
+                        <span class="badge bg-success">Đang hoạt động</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Ngừng hoạt động</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a> |
+                    <a href="javascript:void(0);" 
+                       onclick="confirmToggleStatus(@item.Id, '@item.Ten_Danh_Muc', @(item.Trang_Thai.ToString().ToLower()))"
+                       class="btn btn-sm @(item.Trang_Thai ? "btn-danger" : "btn-success")">
+                        @(item.Trang_Thai ? "Khóa" : "Mở khóa")
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function confirmToggleStatus(id, name, isActive) {
+            const action = isActive ? 'khóa' : 'mở khóa';
+            const status = isActive ? 'đang hoạt động' : 'đã bị khóa';
+            
+            if (confirm(`Bạn có chắc muốn ${action} danh mục "${name}" (hiện ${status})?`)) {
+                window.location.href = '@Url.Action("ToggleStatus", "DanhMuc")/' + id;
+            }
+        }
+    </script>
+}

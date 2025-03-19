@@ -1,0 +1,29 @@
+﻿@model ThuongMaiDienTu.Models.DanhMuc
+
+@{
+    ViewData["Title"] = "Thêm danh mục";
+}
+
+<h1>Thêm danh mục mới</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Ten_Danh_Muc" class="control-label">Tên danh mục</label>
+                <input asp-for="Ten_Danh_Muc" class="form-control" />
+                <span asp-validation-for="Ten_Danh_Muc" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3">
+                <input type="submit" value="Thêm mới" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

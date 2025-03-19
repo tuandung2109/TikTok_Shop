@@ -40,6 +40,8 @@ CREATE TABLE [danh_muc] (
   [ten_danh_muc] VARCHAR(255)
 );
 GO
+ALTER TABLE danh_muc
+ADD trang_thai BIT NOT NULL DEFAULT 1; -- 1: Hoạt động (mở), 0: Khóa
 
 -- Bảng sản phẩm
 CREATE TABLE [san_pham] (
