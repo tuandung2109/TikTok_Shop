@@ -80,6 +80,17 @@
                                 </ul>
                             </div>
                         }
+                        else {
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-file-medical icon"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DonHang")">Danh sách đơn hàng</a></li>
+                                    @* <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Danh Sách Sản Phẩm</a></li> *@
+                                </ul>
+                            </div>
+                        }
                         
                         <a href="@Url.Action("Profile", "Account")"><i class="fa-solid fa-user-tie icon"></i></a>
                         <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger ms-2">Đăng Xuất</a>
