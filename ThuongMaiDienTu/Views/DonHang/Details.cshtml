@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ThuongMaiDienTu.Models.ChiTietDonHang>
+
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Hàng";
+}
+
+<h2>Chi Tiết Đơn Hàng</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().SanPham.Ten_San_Pham)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().So_Luong)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Gia)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SanPham.Ten_San_Pham)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.So_Luong)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Gia)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
