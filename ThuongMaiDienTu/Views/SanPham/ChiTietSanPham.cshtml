@@ -5,7 +5,8 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="@Url.Content("~/css/ChiTietSanPham.css")">
+
+<link href="~/css/ChiTietSanPham.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 
@@ -29,22 +30,24 @@
     <div class="description">
         <h2>Mô tả sản phẩm</h2>
         <p>@Model.Mo_Ta</p>
-
-
     </div>
 
     <div class="review">
         <h2>Đánh Giá Sản Phẩm</h2>
-
         @foreach (var danhGia in ViewBag.DanhGias)
         {
             <div class="review-item">
                 <p><strong>@danhGia.NguoiDung.Ho_Ten</strong> - @danhGia.Ngay_Danh_Gia.ToString("dd/MM/yyyy")</p>
                 <p>⭐ @danhGia.So_Sao.ToString()/5</p>
                 <p>@danhGia.Noi_Dung</p>
+                @if (!string.IsNullOrEmpty(danhGia.Hinh_Anh))
+                {
+                    <div class="review-image">
+                        <img src="@Url.Content(danhGia.Hinh_Anh)" alt="Hình ảnh đánh giá" />
+                    </div>
+                }
             </div>
         }
-
     </div>
 </main>
 

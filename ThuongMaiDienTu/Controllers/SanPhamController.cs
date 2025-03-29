@@ -112,7 +112,6 @@ namespace ThuongMaiDienTu.Controllers
                 return NotFound();
             }
 
-            // ✅ Lấy danh sách đánh giá
             var danhGiaList = sanPham.DanhGias.ToList();
             double trungBinhSao = danhGiaList.Any() ? danhGiaList.Average(d => d.So_Sao) : 0;
             int tongDanhGia = danhGiaList.Count();
@@ -123,6 +122,5 @@ namespace ThuongMaiDienTu.Controllers
 
             return View(sanPham);
         }
-
     }
 }
