@@ -1,4 +1,5 @@
-﻿using ThuongMaiDienTu.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ThuongMaiDienTu.Data;
 using ThuongMaiDienTu.Models;
 
 namespace ThuongMaiDienTu.Repositories
@@ -24,6 +25,29 @@ namespace ThuongMaiDienTu.Repositories
                 _context.ChiTietDonHangs.Add(ctDonHang);
                 _context.SaveChanges();
             }
+        }
+
+        public void AddThanhToan(ThanhToan thanhToan)
+        {
+            _context.ThanhToans.Add(thanhToan);
+            _context.SaveChanges();
+        }
+
+        public void AddVanChuyen(VanChuyen vanChuyen)
+        {
+            _context.VanChuyens.Add(vanChuyen);
+            _context.SaveChanges();
+        }
+
+        public IEnumerable<DonHang> GetAllAndInfor()
+        {
+            return _context.DonHangs
+            .Include(dh => dh.TrangThaiDonHang)
+            .Include(dh => dh.VanChuyens)
+                .ThenInclude(vc => vc.TrangThaiVanChuyen)
+            .Include(dh => dh.ThanhToans)
+                .ThenInclude(tt => tt.TrangThaiThanhToan)
+            .ToList();
         }
     }
 }

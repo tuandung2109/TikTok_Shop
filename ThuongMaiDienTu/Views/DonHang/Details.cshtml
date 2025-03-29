@@ -4,36 +4,30 @@
     ViewData["Title"] = "Chi Tiết Đơn Hàng";
 }
 
-<h2>Chi Tiết Đơn Hàng</h2>
+<div class="container-fluid mt-4">
+    <h2 class="text-center mb-4">Chi Tiết Đơn Hàng</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.First().SanPham.Ten_San_Pham)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().So_Luong)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Gia)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-bordered table-hover shadow-lg">
+        <thead class="table-primary">
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SanPham.Ten_San_Pham)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.So_Luong)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Gia)
-                </td>
+                <th>@Html.DisplayNameFor(model => model.First().SanPham.Ten_San_Pham)</th>
+                <th>@Html.DisplayNameFor(model => model.First().So_Luong)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Gia)</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.SanPham.Ten_San_Pham)</td>
+                    <td>@Html.DisplayFor(modelItem => item.So_Luong)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Gia)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="text-center mt-3">
+        <a class="btn btn-secondary" asp-action="Index">Quay lại</a>
+    </div>
+</div>

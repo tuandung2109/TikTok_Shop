@@ -28,5 +28,8 @@ namespace ThuongMaiDienTu.Models
         [Required]
         public DateTime Ngay_Tao = DateTime.Now; // Ngày tạo đơn hàng
 
+        public virtual ICollection<VanChuyen>? VanChuyens { get; set; }
+        public virtual ICollection<ThanhToan>? ThanhToans { get; set; }
+
     }
 }
