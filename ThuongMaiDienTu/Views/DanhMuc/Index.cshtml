@@ -4,70 +4,153 @@
     ViewData["Title"] = "Danh mục sản phẩm";
 }
 
-<h1>Quản lý danh mục sản phẩm</h1>
-
-@if (TempData["StatusMessage"] != null)
-{
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        @TempData["StatusMessage"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="bi bi-folder2-open me-2"></i>Quản lý danh mục sản phẩm
+            </h2>
+        </div>
+        <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-1"></i>Thêm danh mục mới
+            </a>
+        </div>
     </div>
-}
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Thêm danh mục mới</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Tên danh mục</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ten_Danh_Muc)
-                </td>
-                <td>
-                    @if (item.Trang_Thai == true)
-                    {
-                        <span class="badge bg-success">Đang hoạt động</span>
-                    }
-                    else
-                    {
-                        <span class="badge bg-danger">Ngừng hoạt động</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Sửa</a> |
-                    <a href="javascript:void(0);" 
-                       onclick="confirmToggleStatus(@item.Id, '@item.Ten_Danh_Muc', @(item.Trang_Thai.ToString().ToLower()))"
-                       class="btn btn-sm @(item.Trang_Thai ? "btn-danger" : "btn-success")">
-                        @(item.Trang_Thai ? "Khóa" : "Mở khóa")
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- Alert Section -->
+    @if (TempData["StatusMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["StatusMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+
+    <!-- Main Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="categoriesTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="ps-4">ID</th>
+                            <th scope="col">Tên danh mục</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" class="text-end pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge bg-secondary">@item.Id</span>
+                                </td>
+                                <td class="fw-medium">
+                                    <i class="bi bi-folder text-warning me-2"></i>
+                                    @item.Ten_Danh_Muc
+                                </td>
+                                <td>
+                                    @if (item.Trang_Thai == true)
+                                    {
+                                        <span class="badge rounded-pill bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Đang hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Ngừng hoạt động
+                                        </span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a asp-action="Edit" asp-route-id="@item.Id" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-pencil-square me-1"></i>Sửa
+                                        </a>
+                                        <button type="button" 
+                                                onclick="confirmToggleStatus(@item.Id, '@item.Ten_Danh_Muc', @(item.Trang_Thai.ToString().ToLower()))"
+                                                class="btn btn-sm @(item.Trang_Thai ? "btn-outline-danger" : "btn-outline-success")">
+                                            <i class="bi @(item.Trang_Thai ? "bi-lock-fill" : "bi-unlock-fill") me-1"></i>
+                                            @(item.Trang_Thai ? "Khóa" : "Mở khóa")
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <span>Hiển thị <strong>@Model.Count()</strong> danh mục</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận thay đổi trạng thái</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <a href="#" id="confirmActionBtn" class="btn btn-primary">Xác nhận</a>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
+        // Tìm kiếm danh mục
+        $(document).ready(function() {
+            $("#searchInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#categoriesTable tbody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+        });
+
+        // Xác nhận thay đổi trạng thái với modal
         function confirmToggleStatus(id, name, isActive) {
             const action = isActive ? 'khóa' : 'mở khóa';
             const status = isActive ? 'đang hoạt động' : 'đã bị khóa';
+            const colorClass = isActive ? 'text-danger' : 'text-success';
             
-            if (confirm(`Bạn có chắc muốn ${action} danh mục "${name}" (hiện ${status})?`)) {
-                window.location.href = '@Url.Action("ToggleStatus", "DanhMuc")/' + id;
-            }
+            const content = `
+                <div class="text-center mb-3">
+                    <i class="bi ${isActive ? 'bi-lock-fill' : 'bi-unlock-fill'} ${colorClass}" style="font-size: 3rem;"></i>
+                </div>
+                <p>Bạn có chắc muốn <strong class="${colorClass}">${action}</strong> danh mục sau?</p>
+                <div class="alert alert-secondary">
+                    <strong>${name}</strong><br>
+                    <small>Trạng thái hiện tại: ${status}</small>
+                </div>
+            `;
+            
+            // Cập nhật nội dung modal
+            document.getElementById('confirmModalBody').innerHTML = content;
+            document.getElementById('confirmActionBtn').href = '@Url.Action("ToggleStatus", "DanhMuc")/' + id;
+            
+            // Hiển thị modal
+            var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+            modal.show();
         }
     </script>
 }

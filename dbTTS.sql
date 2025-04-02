@@ -23,6 +23,9 @@ CREATE TABLE [nguoi_dung] (
   [ngay_tao] DATETIME DEFAULT GETDATE()
 );
 GO
+-- Thêm cột Trang_Thai vào bảng nguoi_dung
+ALTER TABLE nguoi_dung
+ADD Trang_Thai BIT NOT NULL DEFAULT 1;
 
 -- Bảng cửa hàng
 CREATE TABLE [cua_hang] (

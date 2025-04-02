@@ -1,0 +1,217 @@
+@model IEnumerable<ThuongMaiDienTu.ViewModels.NguoiDungViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+}
+
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="fw-bold text-primary mb-1">
+                <i class="fa-solid fa-users me-2"></i>Quản lý người dùng
+            </h2>
+            <p class="text-muted">Quản lý tất cả người dùng trong hệ thống</p>
+        </div>
+        <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end">
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fa-solid fa-user-plus me-1"></i>Thêm người dùng mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Alert Section -->
+    @if (TempData["StatusMessage"] != null)
+    {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-check-circle me-2"></i>@TempData["StatusMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+    }
+
+   
+
+    <!-- Main Table -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" id="usersTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="ps-4">ID</th>
+                            <th scope="col">Họ tên</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Vai trò</th>
+                            <th scope="col">Ngày tạo</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col" class="text-end pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                                <tr class="user-row @(item.Trang_Thai ? "active-user" : "inactive-user")">
+                                    <td class="ps-4">
+                                        <span class="badge bg-secondary">@item.Id</span>
+                                    </td>
+                                    <td class="fw-medium">@item.Ho_Ten</td>
+                                    <td>@item.Email</td>
+                                    <td>@item.So_Dien_Thoai</td>
+                                    <td>
+                                        <span class="badge @GetVaiTroBadgeClass(item.Vai_Tro_Id)">
+                                            @item.Ten_Vai_Tro
+                                        </span>
+                                    </td>
+                                    <td>@item.Ngay_Tao.ToString("dd/MM/yyyy")</td>
+                                    <td>
+                                        @if (item.Trang_Thai)
+                                        {
+                                                <span class="badge rounded-pill bg-success">
+                                                    <i class="fa-solid fa-check-circle me-1"></i>Đang hoạt động
+                                                </span>
+                                        }
+                                        else
+                                        {
+                                                <span class="badge rounded-pill bg-danger">
+                                                    <i class="fa-solid fa-ban me-1"></i>Bị khóa
+                                                </span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="btn-group">
+                                            <a asp-action="Details" asp-route-id="@item.Id" 
+                                              class="btn btn-sm btn-outline-info">
+                                                <i class="fa-solid fa-eye me-1"></i>Xem
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@item.Id" 
+                                              class="btn btn-sm btn-outline-primary">
+                                                <i class="fa-solid fa-edit me-1"></i>Sửa
+                                            </a>
+                                            <button type="button" 
+                                                  onclick="confirmToggleStatus(@item.Id, '@item.Ho_Ten', @item.Trang_Thai.ToString().ToLower())"
+                                                  class="btn btn-sm @(item.Trang_Thai ? "btn-outline-danger" : "btn-outline-success")">
+                                                @if (item.Trang_Thai)
+                                                {
+                                                        <i class="fa-solid fa-lock me-1"></i>
+                                                        <span>Khóa</span>
+                                                }
+                                                else
+                                                {
+                                                        <i class="fa-solid fa-unlock me-1"></i>
+                                                        <span>Mở khóa</span>
+                                                }
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <span>Hiển thị <strong>@Model.Count()</strong> người dùng</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận thay đổi trạng thái</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <a href="#" id="confirmActionBtn" class="btn btn-primary">Xác nhận</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <script>
+            // Tìm kiếm người dùng
+            $(document).ready(function() {
+                $("#searchInput").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    $("#usersTable tbody tr").filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                    });
+                });
+            
+                // Lọc theo trạng thái
+                $(".filter-btn").click(function() {
+                    $(".filter-btn").removeClass("active");
+                    $(this).addClass("active");
+                
+                    var filter = $(this).data("filter");
+                    if (filter === "all") {
+                        $(".user-row").show();
+                    } else if (filter === "active") {
+                        $(".active-user").show();
+                        $(".inactive-user").hide();
+                    } else if (filter === "inactive") {
+                        $(".active-user").hide();
+                        $(".inactive-user").show();
+                    }
+                });
+            });
+
+            // Xác nhận thay đổi trạng thái với modal
+            function confirmToggleStatus(id, name, isActive) {
+                const action = isActive ? 'khóa' : 'mở khóa';
+                const status = isActive ? 'đang hoạt động' : 'đã bị khóa';
+                const colorClass = isActive ? 'text-danger' : 'text-success';
+            
+                const content = `
+                    <div class="text-center mb-3">
+                        <i class="fas ${isActive ? 'fa-lock' : 'fa-unlock'} ${colorClass}" style="font-size: 3rem;"></i>
+                    </div>
+                    <p>Bạn có chắc muốn <strong class="${colorClass}">${action}</strong> tài khoản người dùng sau?</p>
+                    <div class="alert alert-secondary">
+                        <strong>${name}</strong><br>
+                        <small>Trạng thái hiện tại: ${status}</small>
+                    </div>
+                `;
+            
+                // Cập nhật nội dung modal
+                document.getElementById('confirmModalBody').innerHTML = content;
+                document.getElementById('confirmActionBtn').href = '@Url.Action("ToggleStatus", "NguoiDung")/' + id;
+            
+                // Hiển thị modal
+                var modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                modal.show();
+            }
+        </script>
+}
+
+@functions {
+    string GetVaiTroBadgeClass(int vaiTroId)
+    {
+        return vaiTroId switch
+        {
+            1 => "bg-primary", // người mua
+            2 => "bg-success", // người bán
+            3 => "bg-danger",  // admin
+            _ => "bg-secondary"
+        };
+    }
+}

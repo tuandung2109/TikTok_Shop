@@ -3,7 +3,7 @@
     ViewData["Title"] = "Đăng Nhập";
 }
 
-<h3 class="text-center">Đăng Nhập</h3>
+@* <h3 class="text-center">Đăng Nhập</h3>
 
 <form method="post" asp-action="Login" asp-controller="Account">
     <div class="mb-3">
@@ -23,5 +23,36 @@
 }
 <div>
     <h4>Bạn chưa có tài khoản?<a href="@Url.Action("Register", "Account")">Đăng ký</a></h4>
-</div>
+</div> *@
 
+<div class="sidenav">
+    <div class="login-main-text">
+        <h2>Trang Đăng nhập</h2>
+         <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+            href="@Url.Action("Index", "Home")">Trang Chủ</a>
+    </div>
+</div>
+<div class="main">
+    <div class="col-md-6 col-sm-12">
+        <div class="login-form">
+            <form method="post" asp-action="Login" asp-controller="Account">
+                <div class="form-group">
+                    <label>Email/Số Điện Thoại</label>
+                    <input type="text" class="form-control" placeholder="Email/Số Điện Thoại" id="username"
+                        name="username">
+                </div>
+                <div class="form-group my-2">
+                    <label>Mật khẩu</label>
+                    <input type="password" class="form-control" placeholder="Mật khẩu" id="password" name="password">
+                </div>
+                <button type="submit" class="btn btn-black mt-2">Đăng Nhập</button>
+                <a class="btn btn-outline-black mt-2" href="@Url.Action("Register", "Account")">Đăng ký</a>
+                
+            </form>
+            @if (ViewBag.Error != "")
+            {
+                <h5 class="text-danger">@ViewBag.Error</h5>
+            }
+        </div>
+    </div>
+</div>

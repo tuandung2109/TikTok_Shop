@@ -5,20 +5,6 @@ body {
     background: #f9f9f9;
 }
 
-/*header */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: white;
-    padding: 15px 20px;
-    border-bottom: 1px solid #ddd;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
 
 .logo {
     display: flex;
@@ -82,11 +68,6 @@ header {
 
 
 
-/* Product Detail */
-main {
-    margin-top: 80px;
-    padding: 20px;
-}
 
 .product-detail {
     display: flex;
@@ -133,12 +114,3 @@ main {
     padding-top: 10px;
 }
 
-h2, h3 {
-    margin-top: 0;
-}
-
-main {
-    margin-top: 80px;
-    padding: 20px;
-    margin-left: 60px; /* Đẩy nội dung sang phải 60px */
-}
