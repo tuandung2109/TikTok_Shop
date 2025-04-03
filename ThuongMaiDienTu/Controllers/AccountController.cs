@@ -43,11 +43,22 @@ namespace ThuongMaiDienTu.Controllers
                     HttpContext.Session.SetInt32("IsSeller", 1);
                     if (!_context.CuaHangs.Any(ch => ch.Id_Nguoi_Ban == userId))
                     {
-                        var cuaHang = _context.CuaHangs.FirstOrDefault(ch => ch.Id_Nguoi_Ban == userId);
-                        HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
                         return RedirectToAction("Create", "Store");
                     }
+                    else
+                    {
+                        var cuaHang = _context.CuaHangs.FirstOrDefault(ch => ch.Id_Nguoi_Ban == userId);
+                        HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
+                    }
                 }
+
+                var checkAdmin = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 3);
+                if (checkAdmin)
+                {
+                    HttpContext.Session.SetInt32("IsAdmin", 1);
+                    return RedirectToAction("Index", "Home");
+                }
+
                 return RedirectToAction("Index", "Home");
             }
             ViewBag.Error = "Tên Đăng nhập hoặc mật khẩu sai!";
