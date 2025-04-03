@@ -30,6 +30,7 @@ namespace ThuongMaiDienTu.Models
 
         public virtual ICollection<VanChuyen>? VanChuyens { get; set; }
         public virtual ICollection<ThanhToan>? ThanhToans { get; set; }
+        public virtual ICollection<ChiTietDonHang>? ChiTietDonHangs { get; set; } // Danh sách chi tiết đơn hàng
 
     }
 }

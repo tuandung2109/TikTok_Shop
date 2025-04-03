@@ -51,7 +51,14 @@ namespace ThuongMaiDienTu.Controllers
                         HttpContext.Session.SetInt32("StoreId", cuaHang.Id);
                     }
                 }
-                
+
+                var checkAdmin = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 3);
+                if (checkAdmin)
+                {
+                    HttpContext.Session.SetInt32("IsAdmin", 1);
+                    return RedirectToAction("Index", "Home");
+                }
+
                 return RedirectToAction("Index", "Home");
             }
             ViewBag.Error = "Tên Đăng nhập hoặc mật khẩu sai!";

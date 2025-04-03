@@ -7,6 +7,6 @@ namespace ThuongMaiDienTu.Repositories
         void AddListSanPham(List<SanPham> list, int idDonHang);
         void AddVanChuyen(VanChuyen vanChuyen);
         void AddThanhToan(ThanhToan thanhToan);
-        IEnumerable<DonHang> GetAllAndInfor();
+        IEnumerable<DonHang> GetAllAndInfor(int? sellerId = null);
     }
 }

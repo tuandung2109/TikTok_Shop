@@ -39,15 +39,22 @@ namespace ThuongMaiDienTu.Repositories
             _context.SaveChanges();
         }
 
-        public IEnumerable<DonHang> GetAllAndInfor()
+        public IEnumerable<DonHang> GetAllAndInfor(int? sellerId = null)
         {
-            return _context.DonHangs
-            .Include(dh => dh.TrangThaiDonHang)
-            .Include(dh => dh.VanChuyens)
-                .ThenInclude(vc => vc.TrangThaiVanChuyen)
-            .Include(dh => dh.ThanhToans)
-                .ThenInclude(tt => tt.TrangThaiThanhToan)
-            .ToList();
+            var query = _context.DonHangs
+                .Include(dh => dh.TrangThaiDonHang)
+                .Include(dh => dh.VanChuyens)
+                    .ThenInclude(vc => vc.TrangThaiVanChuyen)
+                .Include(dh => dh.ThanhToans)
+                    .ThenInclude(tt => tt.TrangThaiThanhToan)
+                .AsQueryable();
+
+            if (sellerId.HasValue)
+            {
+                query = query.Where(dh => dh.ChiTietDonHangs.Any(ct => ct.SanPham.Id_Cua_Hang == sellerId.Value));
+            }
+
+            return query.ToList();
         }
     }
 }

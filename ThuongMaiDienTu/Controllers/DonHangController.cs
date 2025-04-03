@@ -18,35 +18,54 @@ namespace ThuongMaiDienTu.Controllers
         }
         public IActionResult Index()
         {
-            var donHangs = _repository.GetAllAndInfor();
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isSeller = HttpContext.Session.GetInt32("IsSeller");
+            ViewBag.IsSeller = isSeller;
+
+            IEnumerable<DonHang> donHangs;
+            if (isSeller.HasValue && isSeller.Value == 1)
+            {
+                donHangs = _repository.GetAllAndInfor(userId);
+            }
+            else
+            {
+                donHangs = _repository.GetAllAndInfor();
+            }
+
             return View(donHangs);
         }
         public IActionResult Create()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            DonHang donHang = new DonHang();
-            donHang.Id_Nguoi_Mua = userId;
-            donHang.Tong_Tien = CartHelper.GetCartPrice(HttpContext.Session);
-            donHang.Trang_Thai_Id = 1;
-            donHang.Ngay_Tao = DateTime.Now;
-
-            _repository.Add(donHang);
-
             var listSanPham = CartHelper.GetCart(HttpContext.Session);
-            _repository.AddListSanPham(listSanPham, donHang.Id);
 
-            var vanChuyen = new VanChuyen();
-            vanChuyen.Id_Don_Hang = donHang.Id;
-            vanChuyen.Trang_Thai_Id = 1;
-            vanChuyen.Ngay_Cap_Nhat = DateTime.Now;
-            _repository.AddVanChuyen(vanChuyen);
+            var groupedByStore = listSanPham.GroupBy(sp => sp.Id_Cua_Hang);
 
-            var thanhToan = new ThanhToan();
-            thanhToan.Id_Don_Hang = donHang.Id;
-            thanhToan.Phuong_Thuc_Id = 1;
-            thanhToan.Trang_Thai_Id = 1;
-            thanhToan.Ngay_Tao = DateTime.Now;
-            _repository.AddThanhToan(thanhToan);
+            foreach (var group in groupedByStore)
+            {
+                DonHang donHang = new DonHang();
+                donHang.Id_Nguoi_Mua = userId;
+                donHang.Tong_Tien = group.Sum(sp => (decimal) sp.Gia_Khuyen_Mai * sp.So_Luong_Ton);
+                donHang.Trang_Thai_Id = 1;
+                donHang.Ngay_Tao = DateTime.Now;
+
+                _repository.Add(donHang);
+
+                _repository.AddListSanPham(group.ToList(), donHang.Id);
+
+                var vanChuyen = new VanChuyen();
+                vanChuyen.Id_Don_Hang = donHang.Id;
+                vanChuyen.Trang_Thai_Id = 1;
+                vanChuyen.Ngay_Cap_Nhat = DateTime.Now;
+                _repository.AddVanChuyen(vanChuyen);
+
+                var thanhToan = new ThanhToan();
+                thanhToan.Id_Don_Hang = donHang.Id;
+                thanhToan.Phuong_Thuc_Id = 1;
+                thanhToan.Trang_Thai_Id = 1;
+                thanhToan.Ngay_Tao = DateTime.Now;
+                _repository.AddThanhToan(thanhToan);
+            }
 
             return RedirectToAction("Index", "DonHang");
         }
@@ -81,5 +100,19 @@ namespace ThuongMaiDienTu.Controllers
             return Json(new { message = "Xóa Thành Công" });
         }
 
+        [HttpPost]
+        public IActionResult UpdateStatus([FromBody] int id)
+        {
+            var donHang = _repository.GetById(id);
+            if (donHang == null)
+            {
+                return NotFound();
+            }
+
+            donHang.Trang_Thai_Id = 2;
+            _repository.Update(donHang);
+
+            return Json(new { message = "Cập nhật trạng thái thành công" });
+        }
     }
 }

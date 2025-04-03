@@ -2,7 +2,9 @@
 @{
     var user = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
     var isSeller = HttpContextAccessor.HttpContext.Session.GetInt32("IsSeller");
+    var isAdmin = HttpContextAccessor.HttpContext.Session.GetInt32("IsAdmin");
     var cartCount = HttpContextAccessor.HttpContext.Session.GetInt32("cart_count");
+
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -16,7 +18,7 @@
     <link rel="stylesheet" href="~/css/site.css">
     <style>
         .icon {
-            font-size: 30px;
+        font-size: 30px;
         }
     </style>
 </head>
@@ -54,17 +56,6 @@
 
             <!-- Icon giỏ hàng, thông báo và nút đăng nhập -->
             <div class="d-flex align-items-center">
-                <a href="@Url.Action("Index", "Cart")">
-                    <div class="position-relative me-3">
-                        <i class="fa-solid fa-cart-shopping icon"></i>
-                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="cart_count">@cartCount</span>
-                    </div>
-                </a>
-                
-                <div class="position-relative me-3">
-                    <i class="fa-solid fa-bell icon"></i>
-                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">1</span>
-                </div>
                 <div class="d-flex align-items-center">
                     @if (user != null)
                     {
@@ -77,10 +68,29 @@
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                                     <li><a class="dropdown-item" href="@Url.Action("Profile", "Store")">Profile Cửa Hàng</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("Index", "SanPham")">Danh Sách Sản Phẩm</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DonHang")">Quản lý đơn hàng</a></li>
                                 </ul>
                             </div>
                         }
-                        else {
+                        else if (isAdmin != null)
+                        {
+                            <div class="dropdown">
+                                <a href="#" class="dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa-solid fa-file-medical icon"></i>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <li><a class="dropdown-item" href="@Url.Action("Index", "DonHang")">Danh sách đơn hàng</a></li>
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Index", "Cart")">
+                                <div class="position-relative me-3">
+                                    <i class="fa-solid fa-cart-shopping icon"></i>
+                                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="cart_count">@cartCount</span>
+                                </div>
+                            </a>
                             <div class="dropdown">
                                 <a href="#" class="dropdown-toggle" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-file-medical icon"></i>
@@ -91,12 +101,23 @@
                                 </ul>
                             </div>
                         }
-                        
+
                         <a href="@Url.Action("Profile", "Account")"><i class="fa-solid fa-user-tie icon"></i></a>
                         <a href="@Url.Action("Logout", "Account")" class="btn btn-outline-danger ms-2">Đăng Xuất</a>
                     }
                     else
                     {
+                        <a href="@Url.Action("Index", "Cart")">
+                            <div class="position-relative me-3">
+                                <i class="fa-solid fa-cart-shopping icon"></i>
+                                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="cart_count">@cartCount</span>
+                            </div>
+                        </a>
+
+                        <div class="position-relative me-3">
+                            <i class="fa-solid fa-bell icon"></i>
+                            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">1</span>
+                        </div>
                         <!-- Nếu chưa đăng nhập -->
                         <button onclick="window.location.href='@Url.Action("Login", "Account")'" class="btn btn-dark">Đăng Nhập</button>
                     }

@@ -33,9 +33,18 @@
                         <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
                             <i class="fas fa-info-circle"></i> Chi Tiết
                         </a>
-                        <button class="btn btn-danger btn-sm xoaDonHang" data-id="@item.Id">
-                            <i class="fas fa-trash"></i> Xóa
-                        </button>
+                        @if (ViewBag.IsSeller != null && item.TrangThaiDonHang.Id == 1)
+                        {
+                            <button class="btn btn-danger btn-sm xacNhanDonHang" data-id="@item.Id">
+                                <i class="fa-solid fa-circle-check"></i> Xác nhận
+                            </button>
+                        }
+                        @if (item.TrangThaiDonHang.Id != 2)
+                        {
+                            <button class="btn btn-danger btn-sm xoaDonHang" data-id="@item.Id">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        }
                     </td>
                 </tr>
             }
@@ -45,6 +54,25 @@
 
 @section Scripts {
     <script>
+        document.querySelectorAll(".xacNhanDonHang").forEach(button => {
+            button.addEventListener("click", function(event) {
+                let orderId = this.getAttribute("data-id");
+                if (confirm("Bạn có muốn xác nhận đơn hàng ID " + orderId + " không?")) {
+                    fetch('@Url.Action("UpdateStatus", "DonHang")', {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(orderId)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        location.reload();
+                    })
+                    .catch(error => console.error("Lỗi:", error));
+                }
+            });
+        });
+
         document.querySelectorAll(".xoaDonHang").forEach(button => {
             button.addEventListener("click", function(event) {
                 let orderId = this.getAttribute("data-id");
@@ -62,6 +90,6 @@
                     .catch(error => console.error("Lỗi:", error));
                 }
             });
-        })
+        });
     </script>
 }
