@@ -1,0 +1,172 @@
+@model ThuongMaiDienTu.ViewModels.NguoiDungViewModel
+
+@{
+    ViewData["Title"] = "Chi tiết người dùng";
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body text-center py-5">
+                    <div class="mb-4">
+                        <span class="avatar avatar-xl rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px; font-size: 2.5rem;">
+                            @Model.Ho_Ten[0]
+                        </span>
+                    </div>
+                    <h4 class="mb-1">@Model.Ho_Ten</h4>
+                    <p class="mb-2 text-muted">@Model.Email</p>
+                    <div class="mb-3">
+                        <span class="badge rounded-pill @(Model.Vai_Tro_Id == 3 ? "bg-danger" : (Model.Vai_Tro_Id == 2 ? "bg-success" : "bg-primary"))">
+                            @Model.Ten_Vai_Tro
+                        </span>
+                        <span class="badge rounded-pill @(Model.Trang_Thai ? "bg-success" : "bg-danger")">
+                            @(Model.Trang_Thai ? "Đang hoạt động" : "Bị khóa")
+                        </span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil-square me-1"></i>Chỉnh sửa
+                        </a>
+                        @if (Model.Trang_Thai)
+                        {
+                                <a href="#" onclick="confirmToggleStatus(@Model.Id, '@Model.Ho_Ten', @Model.Trang_Thai.ToString().ToLower()); return false;" class="btn btn-outline-danger">
+                                    <i class="bi bi-lock-fill me-1"></i>Khóa tài khoản
+                                </a>
+                        }
+                        else
+                        {
+                                <a href="#" onclick="confirmToggleStatus(@Model.Id, '@Model.Ho_Ten', @Model.Trang_Thai.ToString().ToLower()); return false;" class="btn btn-outline-success">
+                                    <i class="bi bi-unlock-fill me-1"></i>Mở khóa tài khoản
+                                </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.HasStore)
+            {
+                    <div class="card shadow-sm">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">Thông tin cửa hàng</h5>
+                        </div>
+                        <div class="card-body">
+                            <a asp-controller="Store" asp-action="Details" asp-route-id="@Model.StoreId" class="btn btn-primary">
+                                <i class="bi bi-shop me-1"></i>Xem thông tin cửa hàng
+                            </a>
+                        </div>
+                    </div>
+            }
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Thông tin chi tiết</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">ID người dùng</div>
+                        <div class="col-md-8">@Model.Id</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">Họ tên</div>
+                        <div class="col-md-8">@Model.Ho_Ten</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">Email</div>
+                        <div class="col-md-8">
+                            <a href="mailto:@Model.Email">@Model.Email</a>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">Số điện thoại</div>
+                        <div class="col-md-8">
+                            <a href="tel:@Model.So_Dien_Thoai">@Model.So_Dien_Thoai</a>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">Vai trò</div>
+                        <div class="col-md-8">
+                            <span class="badge rounded-pill @(Model.Vai_Tro_Id == 3 ? "bg-danger" : (Model.Vai_Tro_Id == 2 ? "bg-success" : "bg-primary"))">@Model.Ten_Vai_Tro</span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">Trạng thái</div>
+                        <div class="col-md-8">
+                            @if (Model.Trang_Thai)
+                            {
+                                    <span class="badge rounded-pill bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Đang hoạt động
+                                    </span>
+                            }
+                            else
+                            {
+                                    <span class="badge rounded-pill bg-danger">
+                                        <i class="bi bi-x-circle me-1"></i>Bị khóa
+                                    </span>
+                            }
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold text-muted">Ngày tạo</div>
+                        <div class="col-md-8">@Model.Ngay_Tao.ToString("dd/MM/yyyy HH:mm:ss")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal xác nhận -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác nhận thay đổi trạng thái</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="confirmModalBody">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <a href="#" id="confirmActionBtn" class="btn btn-primary">Xác nhận</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+        <script>
+            // Xác nhận thay đổi trạng thái
+            function confirmToggleStatus(id, name, isActive) {
+                const action = isActive ? 'khóa' : 'mở khóa';
+                const status = isActive ? 'đang hoạt động' : 'bị khóa';
+                const icon = isActive ? 'lock' : 'unlock';
+                const colorClass = isActive ? 'danger' : 'success';
+            
+                const message = `
+                    <div class="text-center mb-4">
+                        <i class="bi bi-${icon}-fill text-${colorClass}" style="font-size: 3rem;"></i>
+                    </div>
+                    <p>Bạn có chắc muốn <strong class="text-${colorClass}">${action}</strong> tài khoản người dùng này?</p>
+                    <div class="alert alert-secondary">
+                        <strong>${name}</strong><br>
+                        <small>Trạng thái hiện tại: ${status}</small>
+                    </div>
+                `;
+            
+                document.getElementById('confirmModalBody').innerHTML = message;
+                document.getElementById('confirmActionBtn').href = '@Url.Action("ToggleStatus", "NguoiDung")/' + id;
+            
+                var myModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+                myModal.show();
+            }
+        </script>
+}

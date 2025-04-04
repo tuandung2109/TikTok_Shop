@@ -21,7 +21,7 @@ namespace ThuongMaiDienTu.Models
 
         [Required]
         [StringLength(255)]
-        public string Mat_Khau { get; set; } 
+        public string Mat_Khau { get; set; }
 
         [StringLength(20)]
         [Phone]
@@ -33,6 +33,7 @@ namespace ThuongMaiDienTu.Models
         public VaiTro? VaiTro { get; set; } // Navigation Property
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public DateTime Ngay_Tao { get; set; } = DateTime.Now;
+        public DateTime Ngay_Tao { get; set; }
+        public bool Trang_Thai { get; set; } = true;
     }
 }

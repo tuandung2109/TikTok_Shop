@@ -1,0 +1,141 @@
+@model ThuongMaiDienTu.ViewModels.NguoiDungCreateViewModel
+
+@{
+    ViewData["Title"] = "Tạo người dùng mới";
+}
+
+<div class="container-fluid py-4">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+        </a>
+    </div>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="card-title text-primary mb-0">
+                        <i class="bi bi-person-plus me-2"></i>Thêm người dùng mới
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="Ho_Ten" class="col-md-3 col-form-label">Họ tên <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input asp-for="Ho_Ten" class="form-control" placeholder="Nhập họ tên đầy đủ" />
+                                <span asp-validation-for="Ho_Ten" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="Email" class="col-md-3 col-form-label">Email <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input asp-for="Email" class="form-control" placeholder="example@domain.com" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="So_Dien_Thoai" class="col-md-3 col-form-label">Số điện thoại</label>
+                            <div class="col-md-9">
+                                <input asp-for="So_Dien_Thoai" class="form-control" placeholder="0xxxxxxxxx" />
+                                <span asp-validation-for="So_Dien_Thoai" class="text-danger"></span>
+                                <div class="form-text">Điện thoại phải có 10 số và bắt đầu bằng số 0</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="Mat_Khau" class="col-md-3 col-form-label">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <input asp-for="Mat_Khau" class="form-control" type="password" />
+                                <span asp-validation-for="Mat_Khau" class="text-danger"></span>
+                                <div class="form-text">Mật khẩu phải có ít nhất 6 ký tự</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="Vai_Tro_Id" class="col-md-3 col-form-label">Vai trò <span class="text-danger">*</span></label>
+                            <div class="col-md-9">
+                                <select asp-for="Vai_Tro_Id" asp-items="Model.VaiTroList" class="form-select">
+                                    <option value="">-- Chọn vai trò --</option>
+                                </select>
+                                <span asp-validation-for="Vai_Tro_Id" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <label asp-for="Trang_Thai" class="col-md-3 col-form-label">Trạng thái</label>
+                            <div class="col-md-9">
+                                <div class="form-check form-switch">
+                                    <input asp-for="Trang_Thai" class="form-check-input" />
+                                    <label class="form-check-label" for="Trang_Thai">
+                                        Hoạt động
+                                    </label>
+                                </div>
+                                <span asp-validation-for="Trang_Thai" class="text-danger"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-9 offset-md-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-1"></i>Lưu
+                                </button>
+                                <a asp-action="Index" class="btn btn-outline-secondary">Hủy</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Hiển thị thông báo lỗi
+            if ($('.text-danger').length > 0) {
+                // Tự động cuộn đến trường lỗi đầu tiên
+                $('html, body').animate({
+                    scrollTop: $('.text-danger').first().offset().top - 100
+                }, 500);
+            }
+            
+            // Validate client-side cho mật khẩu
+            $('#Mat_Khau').on('input', function() {
+                var password = $(this).val();
+                if (password.length > 0 && password.length < 6) {
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+            
+            // Validate số điện thoại
+            $('#So_Dien_Thoai').on('input', function() {
+                var phone = $(this).val();
+                if (phone.length > 0 && !phone.match(/^0\d{9}$/)) {
+                    $(this).addClass('is-invalid');
+                } else {
+                    $(this).removeClass('is-invalid');
+                }
+            });
+        });
+    </script>
+}

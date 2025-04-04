@@ -39,7 +39,9 @@ namespace ThuongMaiDienTu.Controllers
                     .FirstOrDefault();
                 HttpContext.Session.SetInt32("UserId", userId);
                 var checkSeller = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 2);
-                if (checkSeller) {
+                var checkAdmin = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 3);
+                if (checkSeller)
+                {
                     HttpContext.Session.SetInt32("IsSeller", 1);
                     if (!_context.CuaHangs.Any(ch => ch.Id_Nguoi_Ban == userId))
                     {
@@ -52,7 +54,7 @@ namespace ThuongMaiDienTu.Controllers
                     }
                 }
 
-                var checkAdmin = _context.NguoiDungs.Where(nd => nd.Id == userId).Any(c => c.Vai_Tro_Id == 3);
+               
                 if (checkAdmin)
                 {
                     HttpContext.Session.SetInt32("IsAdmin", 1);

@@ -5,6 +5,64 @@
     ViewData["Title"] = "Đăng Ký";
 }
 
+
+<div class="sidenav">
+    <div class="login-main-text">
+        <h2>Trang Đăng Ký</h2>
+        <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+            href="@Url.Action("Index", "Home")">Trang Chủ</a>
+    </div>
+</div>
+<div class="main">
+    <div class="col-md-6 col-sm-12">
+        <div class="login-form" id=form-Dk>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label asp-for="Ho_Ten">Họ và Tên</label>
+                    <input asp-for="Ho_Ten" type="text" class="form-control" placeholder="Email/Số Điện Thoại"
+                        name="username">
+                    <span asp-validation-for="Ho_Ten" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" class="form-control" placeholder="Email" id="password"
+                        name="password">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Mat_Khau">Mật Khẩu</label>
+                    <input asp-for="Mat_Khau" type="password" class="form-control" placeholder="Mật khẩu" id="password"
+                        name="password">
+                    <span asp-validation-for="Mat_Khau" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Mat_Khau">Mật khẩu</label>
+                    <input asp-for="Mat_Khau" type="password" class="form-control" placeholder="Nhập lại mật khẩu" id="password"
+                        name="password">
+                    <span asp-validation-for="Mat_Khau" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="So_Dien_Thoai">Số Điện Thoại</label>
+                    <input asp-for="So_Dien_Thoai"  class="form-control" placeholder="Số Điện Thoại"
+                        name="password">
+                    <span asp-validation-for="So_Dien_Thoai" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="So_Dien_Thoai">Vai Trò</label>
+                    <select asp-for="Vai_Tro_Id" class="form-control">
+                        <option value="1">Người Mua</option>
+                        <option value="2">Người Bán</option>
+                    </select>
+                    <span asp-validation-for="Vai_Tro_Id" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-black mt-2">Đăng Ký</button>
+                <a class="btn btn-outline-black mt-2" href="@Url.Action("Login", "Account")">Đăng Nhập</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@* 
 <h3 class="text-center">Đăng Ký Tài Khoản</h3>
 
 <form id="registerForm" >
@@ -46,7 +104,7 @@
 
 <div class="text-center mt-3">
     <h4>Đã có tài khoản?<a href="@Url.Action("Login", "Account")"> Đăng nhập</a></h4>
-</div>
+</div> *@
 
 <script>
     document.getElementById("registerForm").addEventListener("submit", function(event){
