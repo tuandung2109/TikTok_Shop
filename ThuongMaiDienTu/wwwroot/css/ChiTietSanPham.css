@@ -114,9 +114,6 @@
     padding-top: 10px;
 }
 
-h2, h3 {
-    margin-top: 0;
-}
 
 /* Responsive */
 @media (max-width: 768px) {
