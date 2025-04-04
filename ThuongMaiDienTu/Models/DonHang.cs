@@ -22,7 +22,7 @@ namespace ThuongMaiDienTu.Models
         public virtual TrangThaiDonHang? TrangThaiDonHang { get; set; }
 
         [Required]
-        [Precision(10, 2)]
+        [Precision(18, 2)]
         public decimal Tong_Tien { get; set; } // Tổng tiền đơn hàng
 
         [Required]
