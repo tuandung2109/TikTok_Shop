@@ -82,7 +82,7 @@ namespace ThuongMaiDienTu.Controllers
                 {
                     sp.Id,
                     sp.Ten_San_Pham,
-                    sp.Hinh_Anh,
+                    Hinh_Anh = sp.Hinh_Anh != null ? Url.Content(sp.Hinh_Anh) : Url.Content("~/images/logo.png"),
                     sp.Gia_Goc,
                     sp.Giam_Gia
                 }),
@@ -92,15 +92,6 @@ namespace ThuongMaiDienTu.Controllers
 
             return Json(result);
         }
-        /*
-                [HttpGet]
-                public IActionResult TimKiem(string tuKhoa)
-                {
-                    List<SanPham> ketQua = _sanPhamRepository.TimKiemSanPham(tuKhoa);
-                    ViewBag.TuKhoa = tuKhoa; // Lưu từ khóa để hiển thị lại trên giao diện
-                    return View(ketQua);
-                }
-        */
 
         [HttpGet]
         public IActionResult TimKiem(string tuKhoa, int page = 1)
@@ -137,7 +128,7 @@ namespace ThuongMaiDienTu.Controllers
                 {
                     sp.Id,
                     sp.Ten_San_Pham,
-                    sp.Hinh_Anh,
+                    Hinh_Anh = sp.Hinh_Anh != null ? Url.Content(sp.Hinh_Anh) : Url.Content("~/images/logo.png"),
                     sp.Gia_Goc,
                     sp.Giam_Gia
                 }),

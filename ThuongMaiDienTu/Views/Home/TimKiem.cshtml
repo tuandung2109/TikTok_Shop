@@ -26,7 +26,11 @@
                         <div class="product-item h-100">
                             <a href="@Url.Action("ChiTietSanPham", "SanPham", new { id = sanPham.Id })">
                                 <div class="product-image">
-                                    <img src="@Url.Content(sanPham.Hinh_Anh)" alt="@sanPham.Ten_San_Pham" class="img-fluid">
+                                    @{
+                                        string defaultImage = "~/images/logo.png";
+                                        string imageUrl = string.IsNullOrEmpty(sanPham.Hinh_Anh) ? defaultImage : sanPham.Hinh_Anh;
+                                    }
+                                    <img src="@Url.Content(imageUrl)" alt="@sanPham.Ten_San_Pham" class="img-fluid">
                                 </div>
                                 <p><strong>@sanPham.Ten_San_Pham</strong></p>
                                 <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
@@ -67,25 +71,30 @@
         var url = '@Url.Action("GetSearchProducts", "Home")' + '?tuKhoa=' + encodeURIComponent(tuKhoa) + '&page=' + page;
 
         fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                // Cập nhật danh sách sản phẩm
+                console.log('Data received:', data); // Kiểm tra dữ liệu
                 var productList = document.getElementById('productList');
                 productList.innerHTML = ''; // Xóa danh sách cũ
                 data.products.forEach(function (sp) {
                     var html = `
-                                <div class="col">
-                                    <div class="product-item h-100">
-                                        <a href="@Url.Action("ChiTietSanPham", "SanPham")/${sp.id}">
-                                            <div class="product-image">
-                                                <img src="${sp.hinh_Anh}" alt="${sp.ten_San_Pham}" class="img-fluid">
-                                            </div>
-                                            <p><strong>${sp.ten_San_Pham}</strong></p>
-                                            <p style="color:red;">Giảm giá: ${sp.giam_Gia ? sp.giam_Gia.toLocaleString() : 0} VNĐ</p>
-                                            <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Goc - (sp.giam_Gia || 0)).toLocaleString()} VNĐ</p>
-                                        </a>
+                        <div class="col">
+                            <div class="product-item h-100">
+                                <a href="@Url.Action("ChiTietSanPham", "SanPham")/${sp.id}">
+                                    <div class="product-image">
+                                        <img src="${sp.hinh_Anh}" alt="${sp.ten_San_Pham}" class="img-fluid" onerror="this.src='/images/default-product-image.jpg'">
                                     </div>
-                                </div>`;
+                                    <p><strong>${sp.ten_San_Pham}</strong></p>
+                                    <p style="color:red;">Giảm giá: ${sp.giam_Gia ? sp.giam_Gia.toLocaleString() : 0} VNĐ</p>
+                                    <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Goc - (sp.giam_Gia || 0)).toLocaleString()} VNĐ</p>
+                                </a>
+                            </div>
+                        </div>`;
                     productList.innerHTML += html;
                 });
 
@@ -93,24 +102,23 @@
                 var pagination = document.getElementById('pagination');
                 pagination.innerHTML = '';
                 pagination.innerHTML += `
-                            <li class="page-item ${data.currentPage === 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="#" data-page="${data.currentPage - 1}">Trước</a>
-                            </li>`;
+                    <li class="page-item ${data.currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${data.currentPage - 1}">Trước</a>
+                    </li>`;
                 for (let i = 1; i <= data.totalPages; i++) {
                     pagination.innerHTML += `
-                                <li class="page-item ${i === data.currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="#" data-page="${i}">${i}</a>
-                                </li>`;
+                        <li class="page-item ${i === data.currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" data-page="${i}">${i}</a>
+                        </li>`;
                 }
                 pagination.innerHTML += `
-                            <li class="page-item ${data.currentPage === data.totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="#" data-page="${data.currentPage + 1}">Tiếp</a>
-                            </li>`;
+                    <li class="page-item ${data.currentPage === data.totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" data-page="${data.currentPage + 1}">Tiếp</a>
+                    </li>`;
 
-                // Gắn lại sự kiện cho các link phân trang
                 attachPaginationEvents(tuKhoa);
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => console.error('Error fetching search products:', error));
     }
 
     // Hàm gắn sự kiện cho phân trang
