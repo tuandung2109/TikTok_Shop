@@ -23,6 +23,9 @@ CREATE TABLE [nguoi_dung] (
   [ngay_tao] DATETIME DEFAULT GETDATE()
 );
 GO
+ALTER TABLE nguoi_dung
+ALTER COLUMN ho_ten NVARCHAR(255);
+
 -- Thêm cột Trang_Thai vào bảng nguoi_dung
 ALTER TABLE nguoi_dung
 ADD Trang_Thai BIT NOT NULL DEFAULT 1;
@@ -36,6 +39,12 @@ CREATE TABLE [cua_hang] (
   [ngay_tao] DATETIME DEFAULT GETDATE()
 );
 GO
+ALTER TABLE cua_hang
+ALTER COLUMN ten_cua_hang NVARCHAR(255);
+
+ALTER TABLE cua_hang
+ALTER COLUMN mo_ta NVARCHAR(MAX);
+
 
 -- Bảng danh mục sản phẩm
 CREATE TABLE [danh_muc] (
@@ -45,6 +54,9 @@ CREATE TABLE [danh_muc] (
 GO
 ALTER TABLE danh_muc
 ADD trang_thai BIT NOT NULL DEFAULT 1; -- 1: Hoạt động (mở), 0: Khóa
+ALTER TABLE danh_muc
+ALTER COLUMN ten_danh_muc NVARCHAR(100)
+
 
 -- Bảng sản phẩm
 CREATE TABLE [san_pham] (
@@ -61,6 +73,8 @@ CREATE TABLE [san_pham] (
 );
 GO
 ALTER TABLE san_pham ADD hinh_anh NVARCHAR(255) NULL;
+ALTER TABLE san_pham
+ALTER COLUMN ten_san_pham NVARCHAR(255);
 
 
 -- Bảng trạng thái đơn hàng (thay cho ENUM)
@@ -166,6 +180,9 @@ CREATE TABLE [danh_gia] (
   [ngay_danh_gia] DATETIME DEFAULT GETDATE()
 );
 GO
+ALTER TABLE danh_gia
+ALTER COLUMN noi_dung NVARCHAR(MAX);
+
 -- Bảng banner
 CREATE TABLE [banner] (
   [id] INT PRIMARY KEY IDENTITY(1,1),
@@ -173,3 +190,6 @@ CREATE TABLE [banner] (
   [hinh_anh] VARCHAR(255),
 );
 GO
+ALTER TABLE banner
+ALTER COLUMN tieu_de NVARCHAR(255);
+
