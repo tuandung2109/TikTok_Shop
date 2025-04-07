@@ -48,7 +48,7 @@ Migrations/
 *.ldf
 *.bak
 *.csv
-*.sql
+
 
 # Docker files (nếu dự án có dùng Docker)
 docker-compose.override.yml
