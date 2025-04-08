@@ -11,11 +11,13 @@ namespace ThuongMaiDienTu.Controllers
     {
         private readonly IDonHangRepository _repository;
         private readonly DbContextApp _context;
+
         public DonHangController(IDonHangRepository repository, DbContextApp context)
         {
             _repository = repository;
             _context = context;
         }
+
         public IActionResult Index()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -34,6 +36,7 @@ namespace ThuongMaiDienTu.Controllers
 
             return View(donHangs);
         }
+
         public IActionResult Create()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
@@ -45,7 +48,7 @@ namespace ThuongMaiDienTu.Controllers
             {
                 DonHang donHang = new DonHang();
                 donHang.Id_Nguoi_Mua = userId;
-                donHang.Tong_Tien = group.Sum(sp => (decimal) sp.Gia_Khuyen_Mai * sp.So_Luong_Ton);
+                donHang.Tong_Tien = group.Sum(sp => (decimal)sp.Gia_Khuyen_Mai * sp.So_Luong_Ton);
                 donHang.Trang_Thai_Id = 1;
                 donHang.Ngay_Tao = DateTime.Now;
 
@@ -72,6 +75,10 @@ namespace ThuongMaiDienTu.Controllers
 
         public IActionResult Details(int id)
         {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var isSeller = HttpContext.Session.GetInt32("IsSeller");
+            ViewBag.IsSeller = isSeller; // Thêm dòng này để truyền IsSeller vào view
+
             var chiTietDonHangs = _context.ChiTietDonHangs
                 .Where(ct => ct.Id_Don_Hang == id)
                 .Include(ct => ct.SanPham)
@@ -81,7 +88,7 @@ namespace ThuongMaiDienTu.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Delete([FromBody]int orderId)
+        public IActionResult Delete([FromBody] int orderId)
         {
             var donHang = _repository.GetById(orderId);
 
@@ -114,5 +121,44 @@ namespace ThuongMaiDienTu.Controllers
 
             return Json(new { message = "Cập nhật trạng thái thành công" });
         }
+
+        // Lấy danh sách phương thức thanh toán
+        [HttpGet]
+        public IActionResult GetPaymentMethods()
+        {
+            var paymentMethods = _context.PhuongThucThanhToans
+                .Select(pt => new { pt.Id, pt.Mo_Ta })
+                .ToList();
+            return Json(paymentMethods);
+        }
+
+        // Xử lý thanh toán
+        [HttpPost]
+        public IActionResult ProcessPayment([FromBody] PaymentRequest request)
+        {
+            var thanhToan = _context.ThanhToans
+                .FirstOrDefault(tt => tt.Id_Don_Hang == request.OrderId);
+
+            if (thanhToan == null)
+            {
+                return Json(new { success = false, message = "Không tìm thấy thông tin thanh toán" });
+            }
+
+            thanhToan.Phuong_Thuc_Id = request.PhuongThucId;
+            thanhToan.Trang_Thai_Id = 2; // Hoàn tất
+            thanhToan.Ngay_Tao = DateTime.Now;
+
+            _context.ThanhToans.Update(thanhToan);
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Thanh toán thành công" });
+        }
+    }
+
+    // Class để nhận dữ liệu từ request
+    public class PaymentRequest
+    {
+        public int OrderId { get; set; }
+        public int PhuongThucId { get; set; }
     }
 }

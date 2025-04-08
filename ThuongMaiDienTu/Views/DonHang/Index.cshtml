@@ -30,9 +30,46 @@
                     <td>@item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Mo_Ta</td>
                     <td>@item.Ngay_Tao.ToString("dd/MM/yyyy")</td>
                     <td class="text-center">
-                        <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
-                            <i class="fas fa-info-circle"></i> Chi Tiết
-                        </a>
+                        <!-- Nút Chi Tiết -->
+                        @if (ViewBag.IsSeller != null && ViewBag.IsSeller == 1) // Người bán
+                        {
+                            <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                                <i class="fas fa-info-circle"></i> Chi Tiết
+                            </a>
+                        }
+                        else // Người mua
+                        {
+                            @if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 2) // Đã thanh toán
+                            {
+                                <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                                    <i class="fas fa-info-circle"></i> Chi Tiết
+                                </a>
+                            }
+                            else // Chưa thanh toán
+                            {
+                                <a class="btn btn-info btn-sm disabled" aria-disabled="true">
+                                    <i class="fas fa-info-circle"></i> Chi Tiết
+                                </a>
+                            }
+                        }
+
+                        <!-- Nút Thanh Toán chỉ hiển thị cho người mua -->
+                        @if (ViewBag.IsSeller == null || ViewBag.IsSeller != 1) // Không phải người bán
+                        {
+                            @if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 1) // Chưa thanh toán
+                            {
+                                <button class="btn btn-success btn-sm thanhToanBtn" data-id="@item.Id" data-bs-toggle="modal" data-bs-target="#thanhToanModal">
+                                    <i class="fas fa-money-bill"></i> Thanh Toán
+                                </button>
+                            }
+                            else if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 2) // Đã thanh toán
+                            {
+                                <button class="btn btn-secondary btn-sm" disabled>
+                                    <i class="fas fa-check"></i> Đã Thanh Toán
+                                </button>
+                            }
+                        }
+
                         @if (ViewBag.IsSeller != null && item.TrangThaiDonHang.Id == 1)
                         {
                             <button class="btn btn-danger btn-sm xacNhanDonHang" data-id="@item.Id">
@@ -52,10 +89,86 @@
     </table>
 </div>
 
+<!-- Modal Thanh Toán -->
+<div class="modal fade" id="thanhToanModal" tabindex="-1" aria-labelledby="thanhToanModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="thanhToanModalLabel">Chọn Phương Thức Thanh Toán</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="thanhToanForm">
+                    <input type="hidden" id="orderId" name="orderId" />
+                    <div class="mb-3">
+                        <label for="phuongThucThanhToan" class="form-label">Phương thức thanh toán</label>
+                        <select class="form-select" id="phuongThucThanhToan" name="phuongThucId">
+                            <!-- Các option sẽ được load từ database qua AJAX -->
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Xác Nhận Thanh Toán</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
+        // Load phương thức thanh toán khi modal mở
+        document.querySelectorAll(".thanhToanBtn").forEach(button => {
+            button.addEventListener("click", function (event) {
+                let orderId = this.getAttribute("data-id");
+                document.getElementById("orderId").value = orderId;
+
+                fetch('@Url.Action("GetPaymentMethods", "DonHang")')
+                    .then(response => response.json())
+                    .then(data => {
+                        let select = document.getElementById("phuongThucThanhToan");
+                        select.innerHTML = ""; // Xóa các option cũ
+                        data.forEach(method => {
+                            let option = document.createElement("option");
+                            option.value = method.id;
+                            option.text = method.mo_Ta;
+                            select.appendChild(option);
+                        });
+                    })
+                    .catch(error => console.error("Lỗi khi lấy phương thức thanh toán:", error));
+            });
+        });
+
+        // Xử lý form thanh toán
+        document.getElementById("thanhToanForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            let orderId = document.getElementById("orderId").value;
+            let phuongThucId = document.getElementById("phuongThucThanhToan").value;
+
+            fetch('@Url.Action("ProcessPayment", "DonHang")', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId: orderId, phuongThucId: phuongThucId })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    if (data.success) {
+                        // Cập nhật nút Thanh Toán thành Đã Thanh Toán
+                        document.querySelector(`button[data-id='${orderId}']`).outerHTML =
+                            '<button class="btn btn-secondary btn-sm" disabled><i class="fas fa-check"></i> Đã Thanh Toán</button>';
+                        // Kích hoạt nút Chi Tiết
+                        let chiTietBtn = document.querySelector(`#row-${orderId} .btn-info`);
+                        chiTietBtn.classList.remove("disabled");
+                        chiTietBtn.removeAttribute("aria-disabled");
+                        chiTietBtn.setAttribute("href", '@Url.Action("Details", "DonHang")' + '/' + orderId);
+                        $('#thanhToanModal').modal('hide');
+                    }
+                })
+                .catch(error => console.error("Lỗi khi thanh toán:", error));
+        });
+
+        // Xử lý xác nhận đơn hàng
         document.querySelectorAll(".xacNhanDonHang").forEach(button => {
-            button.addEventListener("click", function(event) {
+            button.addEventListener("click", function (event) {
                 let orderId = this.getAttribute("data-id");
                 if (confirm("Bạn có muốn xác nhận đơn hàng ID " + orderId + " không?")) {
                     fetch('@Url.Action("UpdateStatus", "DonHang")', {
@@ -63,18 +176,19 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(orderId)
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message);
-                        location.reload();
-                    })
-                    .catch(error => console.error("Lỗi:", error));
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message);
+                            location.reload();
+                        })
+                        .catch(error => console.error("Lỗi:", error));
                 }
             });
         });
 
+        // Xử lý xóa đơn hàng
         document.querySelectorAll(".xoaDonHang").forEach(button => {
-            button.addEventListener("click", function(event) {
+            button.addEventListener("click", function (event) {
                 let orderId = this.getAttribute("data-id");
                 if (confirm("Bạn có muốn xoá đơn hàng ID " + orderId + " không?")) {
                     fetch('@Url.Action("Delete", "DonHang")', {
@@ -82,14 +196,14 @@
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(orderId)
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert(data.message);
-                        document.getElementById("row-" + orderId).remove();
-                    })
-                    .catch(error => console.error("Lỗi:", error));
+                        .then(response => response.json())
+                        .then(data => {
+                            alert(data.message);
+                            document.getElementById("row-" + orderId).remove();
+                        })
+                        .catch(error => console.error("Lỗi:", error));
                 }
             });
         });
     </script>
-}
+} 

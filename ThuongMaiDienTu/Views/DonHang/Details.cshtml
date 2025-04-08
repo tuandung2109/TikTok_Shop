@@ -13,7 +13,7 @@
                 <th>@Html.DisplayNameFor(model => model.First().SanPham.Ten_San_Pham)</th>
                 <th>@Html.DisplayNameFor(model => model.First().So_Luong)</th>
                 <th>@Html.DisplayNameFor(model => model.First().Gia)</th>
-                <th>Hành động</th>
+                <th>Nhận xét</th>
             </tr>
         </thead>
         <tbody>
@@ -24,7 +24,11 @@
                     <td>@Html.DisplayFor(modelItem => item.So_Luong)</td>
                     <td>@Html.DisplayFor(modelItem => item.Gia)</td>
                     <td>
-                        <a class="btn btn-primary btn-sm" asp-controller="SanPham" asp-action="DanhGia" asp-route-id="@item.SanPham.Id" asp-route-donHangId="@item.Id_Don_Hang">Đánh Giá</a>
+                        <!-- Nút Đánh Giá chỉ hiển thị cho người mua -->
+                        @if (ViewBag.IsSeller == null || ViewBag.IsSeller != 1) // Không phải người bán
+                        {
+                            <a class="btn btn-primary btn-sm" asp-controller="SanPham" asp-action="DanhGia" asp-route-id="@item.SanPham.Id" asp-route-donHangId="@item.Id_Don_Hang">Đánh Giá</a>
+                        }
                     </td>
                 </tr>
             }
