@@ -17,14 +17,10 @@ namespace ThuongMaiDienTu.Helpers
             return cartData == null ? new List<SanPham>() : JsonConvert.DeserializeObject < List<SanPham> >(cartData);
         }
 
-        public static int GetCartCount(ISession session) {
-            var carData = CartHelper.GetCart(session);
-            var soLuong = 0;
-            foreach (var i in carData)
-            {
-                soLuong += i.So_Luong_Ton;
-            }
-            return soLuong;
+        public static int GetCartCount(ISession session)
+        {
+            var cartData = CartHelper.GetCart(session);
+            return cartData.Count; // Chỉ trả về số lượng mặt hàng (số phần tử trong danh sách)
         }
 
         public static decimal GetCartPrice(ISession session) {

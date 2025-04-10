@@ -7,86 +7,99 @@
 <h2 class="text-center my-4">Danh Sách Đơn Hàng</h2>
 
 <div class="container-fluid">
-    <table class="table table-striped table-hover shadow-lg">
-        <thead class="table-dark">
-            <tr>
-                <th>Id Người mua</th>
-                <th>Tổng tiền</th>
-                <th>Trạng thái</th>
-                <th>Trạng thái vận chuyển</th>
-                <th>Trạng thái thanh toán</th>
-                <th>Ngày tạo</th>
-                <th class="text-center">Thao Tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr id="row-@item.Id">
-                    <td>@Html.DisplayFor(modelItem => item.Id_Nguoi_Mua)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Tong_Tien)</td>
-                    <td>@Html.DisplayFor(modelItem => item.TrangThaiDonHang.Mo_Ta)</td>
-                    <td>@item.VanChuyens.FirstOrDefault()?.TrangThaiVanChuyen.Mo_Ta</td>
-                    <td>@item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Mo_Ta</td>
-                    <td>@item.Ngay_Tao.ToString("dd/MM/yyyy")</td>
-                    <td class="text-center">
-                        <!-- Nút Chi Tiết -->
-                        @if (ViewBag.IsSeller != null && ViewBag.IsSeller == 1) // Người bán
-                        {
-                            <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
-                                <i class="fas fa-info-circle"></i> Chi Tiết
-                            </a>
-                        }
-                        else // Người mua
-                        {
-                            @if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 2) // Đã thanh toán
+    @if (ViewBag.IsLocked == true)
+    {
+        <div class="alert alert-danger text-center my-4">
+            <h4>Tài khoản của bạn đã bị khóa!</h4>
+            <p>Vui lòng liên hệ quản trị viên để biết thêm chi tiết.</p>
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover shadow-lg">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id Người mua</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Trạng thái vận chuyển</th>
+                    <th>Trạng thái thanh toán</th>
+                    <th>Ngày tạo</th>
+                    <th class="text-center">Thao Tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr id="row-@item.Id">
+                        <td>@Html.DisplayFor(modelItem => item.Id_Nguoi_Mua)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Tong_Tien)</td>
+                        <td>@Html.DisplayFor(modelItem => item.TrangThaiDonHang.Mo_Ta)</td>
+                        <td>@item.VanChuyens.FirstOrDefault()?.TrangThaiVanChuyen.Mo_Ta</td>
+                        <td>@item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Mo_Ta</td>
+                        <td>@item.Ngay_Tao.ToString("dd/MM/yyyy")</td>
+                        <td class="text-center">
+                            <!-- Nút Chi Tiết -->
+                            @if (ViewBag.IsSeller != null && ViewBag.IsSeller == 1) // Người bán
                             {
                                 <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
                                     <i class="fas fa-info-circle"></i> Chi Tiết
                                 </a>
                             }
-                            else // Chưa thanh toán
+                            else // Người mua
                             {
-                                <a class="btn btn-info btn-sm disabled" aria-disabled="true">
-                                    <i class="fas fa-info-circle"></i> Chi Tiết
-                                </a>
+                                @if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 2) // Đã thanh toán
+                                {
+                                    <a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">
+                                        <i class="fas fa-info-circle"></i> Chi Tiết
+                                    </a>
+                                }
+                                else // Chưa thanh toán
+                                {
+                                    <a class="btn btn-info btn-sm disabled" aria-disabled="true">
+                                        <i class="fas fa-info-circle"></i> Chi Tiết
+                                    </a>
+                                }
                             }
-                        }
 
-                        <!-- Nút Thanh Toán chỉ hiển thị cho người mua -->
-                        @if (ViewBag.IsSeller == null || ViewBag.IsSeller != 1) // Không phải người bán
-                        {
-                            @if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 1) // Chưa thanh toán
+                            <!-- Nút Thanh Toán chỉ hiển thị cho người mua -->
+                            @if (ViewBag.IsSeller == null || ViewBag.IsSeller != 1) // Không phải người bán
                             {
-                                <button class="btn btn-success btn-sm thanhToanBtn" data-id="@item.Id" data-bs-toggle="modal" data-bs-target="#thanhToanModal">
-                                    <i class="fas fa-money-bill"></i> Thanh Toán
+                                @if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 1) // Chưa thanh toán
+                                {
+                                    <button class="btn btn-success btn-sm thanhToanBtn" data-id="@item.Id" data-bs-toggle="modal" data-bs-target="#thanhToanModal">
+                                        <i class="fas fa-money-bill"></i> Thanh Toán
+                                    </button>
+                                }
+                                else if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 2) // Đã thanh toán
+                                {
+                                    <button class="btn btn-secondary btn-sm" disabled>
+                                        <i class="fas fa-check"></i> Đã Thanh Toán
+                                    </button>
+                                }
+                            }
+
+                            <!-- Nút Xác Nhận chỉ hiển thị cho người bán (Vai_Tro_Id != 1) -->
+                            @if (ViewBag.VaiTroId != 1 && ViewBag.IsSeller != null && item.TrangThaiDonHang.Id == 1)
+                            {
+                                <button class="btn btn-danger btn-sm xacNhanDonHang" data-id="@item.Id">
+                                    <i class="fa-solid fa-circle-check"></i> Xác nhận
                                 </button>
                             }
-                            else if (item.ThanhToans.FirstOrDefault()?.TrangThaiThanhToan.Id == 2) // Đã thanh toán
+
+                            <!-- Nút Xóa -->
+                            @if (item.TrangThaiDonHang.Id != 2)
                             {
-                                <button class="btn btn-secondary btn-sm" disabled>
-                                    <i class="fas fa-check"></i> Đã Thanh Toán
+                                <button class="btn btn-danger btn-sm xoaDonHang" data-id="@item.Id">
+                                    <i class="fas fa-trash"></i> Xóa
                                 </button>
                             }
-                        }
-
-                        @if (ViewBag.IsSeller != null && item.TrangThaiDonHang.Id == 1)
-                        {
-                            <button class="btn btn-danger btn-sm xacNhanDonHang" data-id="@item.Id">
-                                <i class="fa-solid fa-circle-check"></i> Xác nhận
-                            </button>
-                        }
-                        @if (item.TrangThaiDonHang.Id != 2)
-                        {
-                            <button class="btn btn-danger btn-sm xoaDonHang" data-id="@item.Id">
-                                <i class="fas fa-trash"></i> Xóa
-                            </button>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>
 
 <!-- Modal Thanh Toán -->
@@ -206,4 +219,4 @@
             });
         });
     </script>
-} 
+}

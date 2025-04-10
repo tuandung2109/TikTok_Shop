@@ -11,29 +11,77 @@ namespace ThuongMaiDienTu.Controllers
     {
         private readonly IDonHangRepository _repository;
         private readonly DbContextApp _context;
+        private readonly INguoiDungRepository _nguoiDungRepository; // Thêm repository này
 
-        public DonHangController(IDonHangRepository repository, DbContextApp context)
+        public DonHangController(IDonHangRepository repository, DbContextApp context, INguoiDungRepository nguoiDungRepository)
         {
             _repository = repository;
             _context = context;
+            _nguoiDungRepository = nguoiDungRepository; // Khởi tạo trong constructor
         }
+
+        //public IActionResult Index()
+        //{
+        //    var userId = HttpContext.Session.GetInt32("UserId");
+        //    var isSeller = HttpContext.Session.GetInt32("IsSeller");
+        //    ViewBag.IsSeller = isSeller;
+
+        //    IEnumerable<DonHang> donHangs;
+        //    if (isSeller.HasValue && isSeller.Value == 1)
+        //    {
+        //        donHangs = _repository.GetAllAndInfor(userId);
+        //    }
+        //    else
+        //    {
+        //        donHangs = _repository.GetAllAndInfor();
+        //    }
+
+        //    return View(donHangs);
+        //}
+
 
         public IActionResult Index()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
-            var isSeller = HttpContext.Session.GetInt32("IsSeller");
-            ViewBag.IsSeller = isSeller;
+            var vaiTroId = HttpContext.Session.GetInt32("VaiTroId");
 
-            IEnumerable<DonHang> donHangs;
-            if (isSeller.HasValue && isSeller.Value == 1)
+            // Truyền VaiTroId vào ViewBag để sử dụng trong view
+            ViewBag.VaiTroId = vaiTroId.HasValue ? vaiTroId.Value : 0;
+
+            if (userId.HasValue && vaiTroId.HasValue && vaiTroId == 1) // Chỉ kiểm tra với người mua
             {
-                donHangs = _repository.GetAllAndInfor(userId);
+                var nguoiDung = _nguoiDungRepository.GetNguoiDungWithVaiTro(userId.Value);
+                if (nguoiDung != null && nguoiDung.Trang_Thai == false)
+                {
+                    ViewBag.IsLocked = true;
+                    return View(new List<DonHang>());
+                }
+            }
+
+            var isSeller = HttpContext.Session.GetInt32("IsSeller") == 1;
+            IEnumerable<DonHang> donHangs;
+            if (isSeller)
+            {
+                donHangs = _context.DonHangs
+                    .Include(dh => dh.ChiTietDonHangs).ThenInclude(ct => ct.SanPham).ThenInclude(sp => sp.CuaHang)
+                    .Where(dh => dh.ChiTietDonHangs != null && dh.ChiTietDonHangs.Any(ct => ct.SanPham.CuaHang.Id_Nguoi_Ban == userId.Value))
+                    .Include(dh => dh.TrangThaiDonHang)
+                    .Include(dh => dh.VanChuyens).ThenInclude(vc => vc.TrangThaiVanChuyen)
+                    .Include(dh => dh.ThanhToans).ThenInclude(tt => tt.TrangThaiThanhToan)
+                    .ToList();
             }
             else
             {
-                donHangs = _repository.GetAllAndInfor();
+                donHangs = _context.DonHangs
+                    .Where(dh => dh.Id_Nguoi_Mua == userId)
+                    .Include(dh => dh.TrangThaiDonHang)
+                    .Include(dh => dh.VanChuyens).ThenInclude(vc => vc.TrangThaiVanChuyen)
+                    .Include(dh => dh.ThanhToans).ThenInclude(tt => tt.TrangThaiThanhToan)
+                    .ToList();
             }
 
+            ViewBag.IsSeller = isSeller ? 1 : 0;
+            ViewBag.IsLocked = false;
             return View(donHangs);
         }
 
@@ -42,36 +90,60 @@ namespace ThuongMaiDienTu.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             var listSanPham = CartHelper.GetCart(HttpContext.Session);
 
-            var groupedByStore = listSanPham.GroupBy(sp => sp.Id_Cua_Hang);
-
-            foreach (var group in groupedByStore)
+            foreach (var sanPham in listSanPham)
             {
-                DonHang donHang = new DonHang();
-                donHang.Id_Nguoi_Mua = userId;
-                donHang.Tong_Tien = group.Sum(sp => (decimal)sp.Gia_Khuyen_Mai * sp.So_Luong_Ton);
-                donHang.Trang_Thai_Id = 1;
-                donHang.Ngay_Tao = DateTime.Now;
+                // Tạo một đơn hàng mới cho mỗi sản phẩm
+                DonHang donHang = new DonHang
+                {
+                    Id_Nguoi_Mua = userId,
+                    Tong_Tien = (decimal)sanPham.Gia_Khuyen_Mai * sanPham.So_Luong_Ton,
+                    Trang_Thai_Id = 1,
+                    Ngay_Tao = DateTime.Now
+                };
 
                 _repository.Add(donHang);
 
-                _repository.AddListSanPham(group.ToList(), donHang.Id);
+                // Thêm sản phẩm vào chi tiết đơn hàng
+                var chiTietDonHang = new ChiTietDonHang
+                {
+                    Id_Don_Hang = donHang.Id,
+                    Id_San_Pham = sanPham.Id,
+                    So_Luong = sanPham.So_Luong_Ton,
+                    Gia = sanPham.Gia_Khuyen_Mai
+                };
+                _context.ChiTietDonHangs.Add(chiTietDonHang);
 
-                var vanChuyen = new VanChuyen();
-                vanChuyen.Id_Don_Hang = donHang.Id;
-                vanChuyen.Trang_Thai_Id = 1;
-                vanChuyen.Ngay_Cap_Nhat = DateTime.Now;
+                // Thêm thông tin vận chuyển
+                var vanChuyen = new VanChuyen
+                {
+                    Id_Don_Hang = donHang.Id,
+                    Trang_Thai_Id = 1,
+                    Ngay_Cap_Nhat = DateTime.Now
+                };
                 _repository.AddVanChuyen(vanChuyen);
 
-                var thanhToan = new ThanhToan();
-                thanhToan.Id_Don_Hang = donHang.Id;
-                thanhToan.Phuong_Thuc_Id = 1;
-                thanhToan.Trang_Thai_Id = 1;
-                thanhToan.Ngay_Tao = DateTime.Now;
+                // Thêm thông tin thanh toán
+                var thanhToan = new ThanhToan
+                {
+                    Id_Don_Hang = donHang.Id,
+                    Phuong_Thuc_Id = 1,
+                    Trang_Thai_Id = 1,
+                    Ngay_Tao = DateTime.Now
+                };
                 _repository.AddThanhToan(thanhToan);
+
+                // Lưu thay đổi vào database
+                _context.SaveChanges();
             }
+
+            // Xóa giỏ hàng sau khi tạo đơn hàng
+            //CartHelper.SaveCart(HttpContext.Session, new List<SanPham>());
+            //HttpContext.Session.SetInt32("cart_count", 0);
 
             return RedirectToAction("Index", "DonHang");
         }
+
+
 
         public IActionResult Details(int id)
         {
