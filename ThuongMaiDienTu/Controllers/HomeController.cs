@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Http; // Để dùng Session
 
+
 namespace ThuongMaiDienTu.Controllers
 {
     public class HomeController : Controller
@@ -162,6 +163,8 @@ namespace ThuongMaiDienTu.Controllers
             }
 
             const int pageSize = 10;
+            // Làm sạch tuKhoa để hiển thị
+            string sanitizedTuKhoa = string.IsNullOrEmpty(tuKhoa) ? "" : System.Web.HttpUtility.HtmlEncode(tuKhoa); // Mã hóa tạm để đảm bảo an toàn
             List<SanPham> sanPhams = _sanPhamRepository.TimKiemSanPham(tuKhoa);
 
             int totalItems = sanPhams.Count;
@@ -169,6 +172,7 @@ namespace ThuongMaiDienTu.Controllers
             page = Math.Max(1, Math.Min(page, totalPages));
             sanPhams = sanPhams.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
+            ViewBag.TuKhoa = sanitizedTuKhoa; // Gán chuỗi đã làm sạch
             ViewBag.TuKhoa = tuKhoa;
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
@@ -191,6 +195,7 @@ namespace ThuongMaiDienTu.Controllers
                     return Json(new { IsLocked = true, Products = new List<object>(), CurrentPage = 1, TotalPages = 1 });
                 }
             }
+
 
             const int pageSize = 10;
             List<SanPham> sanPhams = _sanPhamRepository.TimKiemSanPham(tuKhoa);

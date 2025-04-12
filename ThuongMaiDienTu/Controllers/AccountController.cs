@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using ThuongMaiDienTu.Data;
 using ThuongMaiDienTu.Models;
 using ThuongMaiDienTu.Repositories;
+using BCrypt.Net; // Thêm dòng này
 
 namespace ThuongMaiDienTu.Controllers
 {
@@ -67,29 +68,54 @@ namespace ThuongMaiDienTu.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Register([FromBody]NguoiDung nguoiDung)
+        public IActionResult Register([FromBody] NguoiDung nguoiDung)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return Json(new { success = false, message = "Dữ liệu không hợp lệ" });
-            }
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                    return Json(new { success = false, message = "Dữ liệu không hợp lệ: " + string.Join(", ", errors) });
+                }
 
-            // Kiểm tra email đã tồn tại
-            if (_context.NguoiDungs.Any(u => u.Email == nguoiDung.Email))
+                // Kiểm tra email đã tồn tại
+                if (_context.NguoiDungs.Any(u => u.Email == nguoiDung.Email))
+                {
+                    return Json(new { success = false, message = "Email đã được sử dụng" });
+                }
+
+                // Kiểm tra số điện thoại đã tồn tại
+                if (_context.NguoiDungs.Any(u => u.So_Dien_Thoai == nguoiDung.So_Dien_Thoai))
+                {
+                    return Json(new { success = false, message = "Số điện thoại đã được sử dụng" });
+                }
+
+                // Kiểm tra Vai_Tro_Id hợp lệ
+                if (!_context.VaiTros.Any(v => v.Id == nguoiDung.Vai_Tro_Id))
+                {
+                    return Json(new { success = false, message = "Vai trò không hợp lệ" });
+                }
+
+                // Mã hóa mật khẩu
+                nguoiDung.Mat_Khau = BCrypt.Net.BCrypt.HashPassword(nguoiDung.Mat_Khau);
+
+                // Gán các giá trị mặc định
+                nguoiDung.Ngay_Tao = DateTime.Now;
+                nguoiDung.Trang_Thai = true;
+
+                _repository.Add(nguoiDung);
+
+                if (nguoiDung.Vai_Tro_Id == 2)
+                {
+                    return Json(new { success = true, message = "Đăng ký thành công!", seller = true });
+                }
+
+                return Json(new { success = true, message = "Đăng ký thành công!", seller = false });
+            }
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = "Email đã được sử dụng" });
+                return Json(new { success = false, message = "Đã có lỗi xảy ra: " + ex.Message });
             }
-
-            nguoiDung.Ngay_Tao = DateTime.Now;
-
-            _repository.Add(nguoiDung);
-
-            if (nguoiDung.Vai_Tro_Id == 2)
-            {
-                return Json(new { success = true, message = "Đăng ký thành công!", seller = true });
-            }
-
-            return Json(new { success = true, message = "Đăng ký thành công!", seller = false });
         }
 
         public IActionResult Logout()

@@ -1,4 +1,6 @@
-﻿@model ThuongMaiDienTu.Models.NguoiDung
+﻿@*
+
+@model ThuongMaiDienTu.Models.NguoiDung
 
 @{
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
@@ -98,3 +100,125 @@
         .catch(error => console.error("Lỗi:", error));
     });
 </script>
+
+*@
+
+
+
+
+
+@model ThuongMaiDienTu.Models.NguoiDung
+
+@{
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+    ViewData["Title"] = "Đăng Ký";
+}
+
+<div class="sidenav">
+    <div class="login-main-text">
+        <h2>Trang Đăng Ký</h2>
+        <a class="link-light link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
+           href="@Url.Action("Index", "Home")">Trang Chủ</a>
+    </div>
+</div>
+<div class="main">
+    <div class="col-md-6 col-sm-12">
+        <div class="login-form" id="form-Dk">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label asp-for="Ho_Ten">Họ và Tên</label>
+                    <input asp-for="Ho_Ten" type="text" class="form-control" placeholder="Họ và tên" id="Ho_Ten" name="Ho_Ten">
+                    <span asp-validation-for="Ho_Ten" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="Email" id="Email" name="Email">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Mat_Khau">Mật Khẩu</label>
+                    <input asp-for="Mat_Khau" type="password" class="form-control" placeholder="Mật khẩu" id="Mat_Khau" name="Mat_Khau">
+                    <span asp-validation-for="Mat_Khau" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label>Xác nhận mật khẩu</label>
+                    <input type="password" class="form-control" placeholder="Nhập lại mật khẩu" id="ConfirmPassword" name="ConfirmPassword">
+                    <span class="text-danger" id="ConfirmPasswordError"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="So_Dien_Thoai">Số Điện Thoại</label>
+                    <input asp-for="So_Dien_Thoai" type="text" class="form-control" placeholder="Số điện thoại" id="So_Dien_Thoai" name="So_Dien_Thoai">
+                    <span asp-validation-for="So_Dien_Thoai" class="text-danger"></span>
+                </div>
+                <div class="form-group my-2">
+                    <label asp-for="Vai_Tro_Id">Vai Trò</label>
+                    <select asp-for="Vai_Tro_Id" class="form-control" id="Vai_Tro_Id" name="Vai_Tro_Id">
+                        <option value="1">Người Mua</option>
+                        <option value="2">Người Bán</option>
+                    </select>
+                    <span asp-validation-for="Vai_Tro_Id" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-black mt-2">Đăng Ký</button>
+                <a class="btn btn-outline-black mt-2" href="@Url.Action("Login", "Account")">Đăng Nhập</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("registerForm").addEventListener("submit", function (event) {
+                event.preventDefault();
+                console.log("Form submitted!");
+
+                let formData = {
+                    Ho_Ten: document.getElementById("Ho_Ten").value,
+                    Email: document.getElementById("Email").value,
+                    Mat_Khau: document.getElementById("Mat_Khau").value,
+                    So_Dien_Thoai: document.getElementById("So_Dien_Thoai").value,
+                    Vai_Tro_Id: document.getElementById("Vai_Tro_Id").value
+                };
+
+                let confirmPassword = document.getElementById("ConfirmPassword").value;
+
+                // Kiểm tra dữ liệu bắt buộc
+                if (!formData.Ho_Ten || !formData.Email || !formData.Mat_Khau || !formData.So_Dien_Thoai || !formData.Vai_Tro_Id) {
+                    alert("Vui lòng điền đầy đủ thông tin!");
+                    return;
+                }
+
+                // Kiểm tra xác nhận mật khẩu
+                if (formData.Mat_Khau !== confirmPassword) {
+                    document.getElementById("ConfirmPasswordError").textContent = "Mật khẩu không khớp!";
+                    return;
+                }
+
+                fetch('@Url.Action("Register", "Account")', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            if (data.seller) {
+                                window.location.href = "@Url.Action("Create", "Store")";
+                            } else {
+                                alert("Đăng ký thành công!");
+                                window.location.href = "@Url.Action("Login", "Account")";
+                            }
+                        } else {
+                            alert("Lỗi: " + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Lỗi:", error);
+                        alert("Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng và thử lại!");
+                    });
+            });
+        });
+    </script>
+}

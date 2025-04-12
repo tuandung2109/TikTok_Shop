@@ -31,7 +31,7 @@
         <div class="info">
             <h1>@Model.Ten_San_Pham</h1>
             <p>⭐ @ViewBag.TrungBinhSao.ToString("0.0")/5 từ @ViewBag.TongDanhGia đánh giá</p>
-            <p><del>@Model.Gia_Goc.ToString("N0") VNĐ</del> <strong>@(Model.Gia_Goc - Model.Giam_Gia) VNĐ</strong></p>
+            <p><del>@Model.Gia_Goc.ToString("N0") VNĐ</del> <strong>@Model.Gia_Khuyen_Mai?.ToString("N0") VNĐ</strong></p>
             <p>Số lượng: <input type="number" value="1" min="1" max="@Model.So_Luong_Ton" id="soLuong_SanPham" /> @Model.So_Luong_Ton sản phẩm có sẵn</p>
             @if (ViewBag.UserVaiTroId == 1) // Chỉ hiển thị nếu vai trò là nguoi_mua
             {

@@ -37,3 +37,4 @@ namespace ThuongMaiDienTu.Models
         public bool Trang_Thai { get; set; } = true;
     }
 }
+

@@ -1,4 +1,6 @@
-﻿@{
+﻿
+
+@{
     ViewData["Title"] = "Trang Chủ";
     Layout = "_Layout";
 }
@@ -23,7 +25,10 @@
                 {
                     var banner = ViewBag.Banners[i];
                     <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <img src="@Url.Content(banner.Hinh_Anh)" class="d-block w-100 img-fluid" alt="@banner.Tieu_De">
+                        @*<img src="@Url.Content(banner.Hinh_Anh)" class="d-block w-100 img-fluid" alt="@banner.Tieu_De">*@
+
+                        @*Mã hóa Tieu_De để tránh XSS trong thuộc tính alt.*@
+                        <img src="@Url.Content(banner.Hinh_Anh)" class="d-block w-100 img-fluid" alt="@Html.Encode(banner.Tieu_De)">
                     </div>
                 }
             </div>
@@ -63,6 +68,7 @@
             </div>
 
             <div class="product-list row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4" id="productList">
+            @*<div class="product-list row row-cols-1 row-cols-lg-4 g-4" id="productList"> *@
                 @foreach (var sanPham in Model)
                 {
                     <div class="col">
@@ -73,11 +79,16 @@
                                         string defaultImage = "~/images/logo.png";
                                         string imageUrl = string.IsNullOrEmpty(sanPham.Hinh_Anh) ? defaultImage : sanPham.Hinh_Anh;
                                     }
-                                    <img src="@Url.Content(imageUrl)" alt="@sanPham.Ten_San_Pham" class="img-fluid">
+                                    
+                                    @*<img src="@Url.Content(imageUrl)" alt="@sanPham.Ten_San_Pham" class="img-fluid">*@
+
+                                    @*Sử dụng @Html.Encode cho Ten_San_Pham để đảm bảo tên sản phẩm không chứa mã HTML hoặc JavaScript độc hại*@
+                                    <img src="@Url.Content(imageUrl)" alt="@Html.Encode(sanPham.Ten_San_Pham)" class="img-fluid">  
+
                                 </div>
                                 <p><strong>@sanPham.Ten_San_Pham</strong></p>
                                 <p style="color:red;">Giảm giá: @sanPham.Giam_Gia?.ToString("N0") VNĐ</p>
-                                <p style="font-weight: bold;">Giá khuyến mãi: @(sanPham.Gia_Goc - sanPham.Giam_Gia) VNĐ</p>
+                                <p style="font-weight: bold;">Giá khuyến mãi: @sanPham.Gia_Khuyen_Mai?.ToString("N0") VNĐ</p>
                             </a>
                         </div>
                     </div>
@@ -108,6 +119,17 @@
 </main>
 
 <script>
+
+    // Hàm htmlEncode chuyển các ký tự đặc biệt trong chuỗi (&, <, >, ", ') thành các thực thể HTML tương ứng (&, <, >, ", '). Điều này ngăn trình duyệt diễn giải chuỗi như mã HTML hoặc JavaScript, giúp tránh tấn công XSS bằng cách đảm bảo dữ liệu chỉ được hiển thị dưới dạng văn bản thuần.
+    function htmlEncode(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function loadProducts(page, danhMucId = null) {
         var url = '@Url.Action("GetProducts", "Home")' + '?page=' + page;
         if (danhMucId !== null && danhMucId !== "0") {
@@ -135,11 +157,13 @@
                                     <div class="product-item h-100">
                                         <a href="@Url.Action("ChiTietSanPham", "SanPham")/${sp.id}">
                                             <div class="product-image">
-                                                <img src="${sp.hinh_Anh}" alt="${sp.ten_San_Pham}" class="img-fluid" onerror="this.src='/images/default-product-image.jpg'">
+                                                    @* Trong <img src="${htmlEncode(sp.hinh_Anh)}", để đảm bảo URL hình ảnh không chứa mã độc (ví dụ: javascript:alert('Hacked')). *@
+                                                    <img src="${htmlEncode(sp.hinh_Anh)}" alt="${htmlEncode(sp.ten_San_Pham)}" class="img-fluid" onerror="this.src='/images/default-product-image.jpg'">
                                             </div>
-                                            <p><strong>${sp.ten_San_Pham}</strong></p>
+                                                @*alt="${htmlEncode(sp.ten_San_Pham)}" và <p><strong>${htmlEncode(sp.ten_San_Pham)}</strong></p>, để ngăn tên sản phẩm chứa JavaScript (ví dụ: <script>alert('Hacked')</script>)*@
+                                                <p><strong>${htmlEncode(sp.ten_San_Pham)}</strong></p>
                                             <p style="color:red;">Giảm giá: ${sp.giam_Gia ? sp.giam_Gia.toLocaleString() : 0} VNĐ</p>
-                                            <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Goc - (sp.giam_Gia || 0)).toLocaleString()} VNĐ</p>
+                                                <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Khuyen_Mai || 0).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} VNĐ</p>
                                         </a>
                                     </div>
                                 </div>`;

@@ -16,3 +16,5 @@ public interface ISanPhamRepository : IRepository<SanPham>
     List<SanPham> GetSanPhamByDanhMuc(int danhMucId);
 
 }
+
+
