@@ -1,4 +1,4 @@
-﻿
+﻿﻿
 
 @{
     ViewData["Title"] = "Trang Chủ";
@@ -68,7 +68,7 @@
             </div>
 
             <div class="product-list row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4" id="productList">
-            @*<div class="product-list row row-cols-1 row-cols-lg-4 g-4" id="productList"> *@
+                @*<div class="product-list row row-cols-1 row-cols-lg-4 g-4" id="productList"> *@
                 @foreach (var sanPham in Model)
                 {
                     <div class="col">
@@ -79,11 +79,11 @@
                                         string defaultImage = "~/images/logo.png";
                                         string imageUrl = string.IsNullOrEmpty(sanPham.Hinh_Anh) ? defaultImage : sanPham.Hinh_Anh;
                                     }
-                                    
+
                                     @*<img src="@Url.Content(imageUrl)" alt="@sanPham.Ten_San_Pham" class="img-fluid">*@
 
                                     @*Sử dụng @Html.Encode cho Ten_San_Pham để đảm bảo tên sản phẩm không chứa mã HTML hoặc JavaScript độc hại*@
-                                    <img src="@Url.Content(imageUrl)" alt="@Html.Encode(sanPham.Ten_San_Pham)" class="img-fluid">  
+                                    <img src="@Url.Content(imageUrl)" alt="@Html.Encode(sanPham.Ten_San_Pham)" class="img-fluid">
 
                                 </div>
                                 <p><strong>@sanPham.Ten_San_Pham</strong></p>
@@ -153,39 +153,39 @@
                 } else {
                     data.products.forEach(function (sp) {
                         var html = `
-                                <div class="col">
-                                    <div class="product-item h-100">
-                                        <a href="@Url.Action("ChiTietSanPham", "SanPham")/${sp.id}">
-                                            <div class="product-image">
-                                                    @* Trong <img src="${htmlEncode(sp.hinh_Anh)}", để đảm bảo URL hình ảnh không chứa mã độc (ví dụ: javascript:alert('Hacked')). *@
-                                                    <img src="${htmlEncode(sp.hinh_Anh)}" alt="${htmlEncode(sp.ten_San_Pham)}" class="img-fluid" onerror="this.src='/images/default-product-image.jpg'">
-                                            </div>
-                                                @*alt="${htmlEncode(sp.ten_San_Pham)}" và <p><strong>${htmlEncode(sp.ten_San_Pham)}</strong></p>, để ngăn tên sản phẩm chứa JavaScript (ví dụ: <script>alert('Hacked')</script>)*@
-                                                <p><strong>${htmlEncode(sp.ten_San_Pham)}</strong></p>
-                                            <p style="color:red;">Giảm giá: ${sp.giam_Gia ? sp.giam_Gia.toLocaleString() : 0} VNĐ</p>
-                                                <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Khuyen_Mai || 0).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} VNĐ</p>
-                                        </a>
-                                    </div>
-                                </div>`;
+                                    <div class="col">
+                                        <div class="product-item h-100">
+                                            <a href="@Url.Action("ChiTietSanPham", "SanPham")/${sp.id}">
+                                                <div class="product-image">
+    @* Trong <img src="${htmlEncode(sp.hinh_Anh)}", để đảm bảo URL hình ảnh không chứa mã độc (ví dụ: javascript:alert('Hacked')). *@
+                                                        <img src="${htmlEncode(sp.hinh_Anh)}" alt="${htmlEncode(sp.ten_San_Pham)}" class="img-fluid" onerror="this.src='/images/default-product-image.jpg'">
+                                                </div>
+    @*alt="${htmlEncode(sp.ten_San_Pham)}" và <p><strong>${htmlEncode(sp.ten_San_Pham)}</strong></p>, để ngăn tên sản phẩm chứa JavaScript (ví dụ: <script>alert('Hacked')</script>)*@
+                                                    <p><strong>${htmlEncode(sp.ten_San_Pham)}</strong></p>
+                                                <p style="color:red;">Giảm giá: ${sp.giam_Gia ? sp.giam_Gia.toLocaleString() : 0} VNĐ</p>
+                                                    <p style="font-weight: bold;">Giá khuyến mãi: ${(sp.gia_Khuyen_Mai || 0).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })} VNĐ</p>
+                                            </a>
+                                        </div>
+                                    </div>`;
                         productList.innerHTML += html;
                     });
 
                     var pagination = document.getElementById('pagination');
                     pagination.innerHTML = '';
                     pagination.innerHTML += `
-                            <li class="page-item ${data.currentPage === 1 ? 'disabled' : ''}">
-                                <a class="page-link" href="#" data-page="${data.currentPage - 1}">Trước</a>
-                            </li>`;
+                                <li class="page-item ${data.currentPage === 1 ? 'disabled' : ''}">
+                                    <a class="page-link" href="#" data-page="${data.currentPage - 1}">Trước</a>
+                                </li>`;
                     for (let i = 1; i <= data.totalPages; i++) {
                         pagination.innerHTML += `
-                                <li class="page-item ${i === data.currentPage ? 'active' : ''}">
-                                    <a class="page-link" href="#" data-page="${i}">${i}</a>
-                                </li>`;
+                                    <li class="page-item ${i === data.currentPage ? 'active' : ''}">
+                                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                                    </li>`;
                     }
                     pagination.innerHTML += `
-                            <li class="page-item ${data.currentPage === data.totalPages ? 'disabled' : ''}">
-                                <a class="page-link" href="#" data-page="${data.currentPage + 1}">Tiếp</a>
-                            </li>`;
+                                <li class="page-item ${data.currentPage === data.totalPages ? 'disabled' : ''}">
+                                    <a class="page-link" href="#" data-page="${data.currentPage + 1}">Tiếp</a>
+                                </li>`;
 
                     attachPaginationEvents(danhMucId);
                 }

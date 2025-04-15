@@ -52,8 +52,5 @@ namespace ThuongMaiDienTu.Models
         [NotMapped]
         public IFormFile? HinhAnhFile { get; set; }
 
-        //[StringLength(10, MinimumLength = 10, ErrorMessage = "Varifykey phải có đúng 10 ký tự")]
-        //public string? Varifykey { get; set; } // Cho phép NULL, xóa [Required]
-
     }
 }

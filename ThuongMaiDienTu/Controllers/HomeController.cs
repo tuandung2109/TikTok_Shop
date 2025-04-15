@@ -117,7 +117,8 @@ namespace ThuongMaiDienTu.Controllers
                     sp.Ten_San_Pham,
                     Hinh_Anh = sp.Hinh_Anh != null ? Url.Content(sp.Hinh_Anh) : Url.Content("~/images/logo.png"),
                     sp.Gia_Goc,
-                    sp.Giam_Gia
+                    sp.Giam_Gia,
+                    sp.Gia_Khuyen_Mai // Thêm Gia_Khuyen_Mai vào JSON
                 }),
                 CurrentPage = page,
                 TotalPages = totalPages
@@ -125,25 +126,6 @@ namespace ThuongMaiDienTu.Controllers
 
             return Json(result);
         }
-
-
-        //[HttpGet]
-        //public IActionResult TimKiem(string tuKhoa, int page = 1)
-        //{
-        //    const int pageSize = 10;
-        //    List<SanPham> sanPhams = _sanPhamRepository.TimKiemSanPham(tuKhoa);
-
-        //    int totalItems = sanPhams.Count;
-        //    int totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-        //    page = Math.Max(1, Math.Min(page, totalPages));
-        //    sanPhams = sanPhams.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-        //    ViewBag.TuKhoa = tuKhoa;
-        //    ViewBag.CurrentPage = page;
-        //    ViewBag.TotalPages = totalPages;
-
-        //    return View(sanPhams);
-        //}
 
 
         [HttpGet]
@@ -196,7 +178,6 @@ namespace ThuongMaiDienTu.Controllers
                 }
             }
 
-
             const int pageSize = 10;
             List<SanPham> sanPhams = _sanPhamRepository.TimKiemSanPham(tuKhoa);
 
@@ -214,7 +195,8 @@ namespace ThuongMaiDienTu.Controllers
                     sp.Ten_San_Pham,
                     Hinh_Anh = sp.Hinh_Anh != null ? Url.Content(sp.Hinh_Anh) : Url.Content("~/images/logo.png"),
                     sp.Gia_Goc,
-                    sp.Giam_Gia
+                    sp.Giam_Gia,
+                    sp.Gia_Khuyen_Mai // Thêm Gia_Khuyen_Mai vào JSON
                 }),
                 CurrentPage = page,
                 TotalPages = totalPages
@@ -236,6 +218,7 @@ namespace ThuongMaiDienTu.Controllers
             return View();
         }
 
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
@@ -243,3 +226,6 @@ namespace ThuongMaiDienTu.Controllers
         }
     }
 }
+
+
+

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿// 1.Input: Mật khẩu và salt.  2.Salt: Tạo một salt ngẫu nhiên.  3.Cost Factor: Sử dụng số vòng băm (cost factor), mặc định là 10 hoặc 12 vòng băm, tùy thuộc vào mức độ bảo mật yêu cầu. 4.Băm: Áp dụng hàm băm qua nhiều vòng lặp, mỗi lần vòng lặp sử dụng đầu ra của lần băm trước. 5.Output: Kết quả là một giá trị băm (hash) chứa salt, cost factor, và băm mật khẩu.
+// $2a$: Phân loại Bcrypt (phiên bản của thuật toán).    12: Cost factor(ở đây là 2^12 vòng lặp).   eKn2jTKGqA3f0GfV5QF8t.: Salt.   xvR5vO / q52LRzLs3YP4FIE9p5UykFOm: Băm mật khẩu.
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ThuongMaiDienTu.Data;
@@ -96,8 +99,8 @@ namespace ThuongMaiDienTu.Controllers
                     return Json(new { success = false, message = "Vai trò không hợp lệ" });
                 }
 
-                // Mã hóa mật khẩu
-                nguoiDung.Mat_Khau = BCrypt.Net.BCrypt.HashPassword(nguoiDung.Mat_Khau);
+                // Lưu mật khẩu trực tiếp (không mã hóa)
+                nguoiDung.Mat_Khau = nguoiDung.Mat_Khau;
 
                 // Gán các giá trị mặc định
                 nguoiDung.Ngay_Tao = DateTime.Now;
